@@ -25,6 +25,7 @@ int endOfField2(string str) {
             if (cnt == 0) return i;
         }
     }
+    return -1;
 }
 
 
@@ -57,7 +58,6 @@ void printVectorOfRecord(vector<record> v) {
         cout << r.field3 << endl;
     }
 }
-
 
 int main() {
     std::cout << "Hello, CIS6030!" << std::endl;
@@ -96,8 +96,6 @@ int main() {
     short res2 = b.getJumpOfRecord(2);
     cout << res1 << endl;
     cout << res2 << endl;
-
-
 
     return 0;
 }

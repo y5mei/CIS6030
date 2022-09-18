@@ -1,0 +1,16 @@
+project(Google_tests)
+add_subdirectory(lib)
+#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+#unit test
+include_directories(lib/googletest-main/googletest/include)
+include_directories(lib/googletest-main/googlemock/include)
+include_directories(../Database_lib)
+include_directories(../DateConverter_lib/)
+
+# adding the Google_Tests_run target
+add_executable(Google_tests test1.cpp)
+
+# linking Google_Tests_run with DateConverter_lib which will be tested
+target_link_libraries(Google_tests DateConverter_libxxx)
+target_link_libraries(Google_tests Database_lib)
+target_link_libraries(Google_tests gtest gtest_main)

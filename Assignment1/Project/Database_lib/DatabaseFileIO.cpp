@@ -96,3 +96,17 @@ void BlockListNode::insertRecordStringToBlock(string str){
     // set jump
     setJumpOfRecord(getNumOfRecord(), startIdx);
 }
+
+//calculate how many empty bytes are available in the current block.
+short BlockListNode::sizeOfEmptyBytes(){
+    short numRecord = getNumOfRecord();
+    if (numRecord == 0){
+        return MAX_SIZE-1;
+    }else{
+        short prevRecordStartIdx = getJumpOfRecord(numRecord);
+        short sizeOfHeader = 1 + 2*numRecord;
+        short sizeOfContent = MAX_SIZE - prevRecordStartIdx + 1;
+        short emptyBytes = MAX_SIZE - sizeOfHeader - sizeOfContent;
+        return emptyBytes;
+    }
+}

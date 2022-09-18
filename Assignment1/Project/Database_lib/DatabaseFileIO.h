@@ -5,11 +5,6 @@
 #ifndef PROJECT_DATABASEFILEIO_H
 #define PROJECT_DATABASEFILEIO_H
 
-
-class DatabaseFileIO {
-
-};
-
 double f1();
 
 class BlockListNode {
@@ -31,6 +26,8 @@ public:
     void insertRecordStringToBlock(std::string str);
 
     void setNumOfRecord(short n);
+
+    short sizeOfEmptyBytes();
 };
 
 #endif //PROJECT_DATABASEFILEIO_H
