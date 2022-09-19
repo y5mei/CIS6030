@@ -8,3 +8,6 @@
 ## Unit Test:
 
 Google Test framework is used for unit test purpose [Link](https://www.jetbrains.com/help/clion/creating-google-test-run-debug-configuration-for-test.html#code-gen-menu)
+
+## Linux Command:
+1. To delete a folder: `rm -r folder/`
