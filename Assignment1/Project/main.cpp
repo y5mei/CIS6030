@@ -30,7 +30,7 @@ int endOfField2(string str) {
 
 
 // read a file and get vector of sorted records
-vector<record> readRawTxtFile(string fileName = "./A1_data.txt") {
+vector<record> readRawTxtFile(string fileName = "../A1_data.txt") {
     string inputText;
     // Read from the text file
     ifstream MyReadFile(fileName);
@@ -75,27 +75,38 @@ int main() {
     cout << "Size of the file is" << " " << file_size << " " << "bytes" << endl;
 
 //    sort the input file based on Field1
-//    vector<record> records = readRawTxtFile();
-//    sort(records.begin(), records.end(),         // Lambda expression begins
-//         [](record a, record b) {
-//             return (a.field1 < b.field1);
-//         } // end of lambda expression
-//    );
+    vector<record> records = readRawTxtFile();
+    sort(records.begin(), records.end(),         // Lambda expression begins
+         [](record a, record b) {
+             return (a.field1 < b.field1);
+         } // end of lambda expression
+    );
 //    printVectorOfRecord(records);
-//    cout << records.back().field1 << endl;
+    cout << records.back().field1 << endl;
 
+    // let's load all the records into the block linked list:
 
-    int mynum = f1();
-    cout << mynum << endl;
+    BlockListNode* b = new BlockListNode();
+    BlockListNode* dummy = b;
 
-    BlockListNode b = BlockListNode(30);
-    cout<<b.getNumOfRecord()<<endl;
-    b.insertRecordStringToBlock("abcde 12345");
-    short res1 = b.getJumpOfRecord(1);
-    b.insertRecordStringToBlock("12345");
-    short res2 = b.getJumpOfRecord(2);
-    cout << res1 << endl;
-    cout << res2 << endl;
+    for(auto r: records){
+        // change this to string buffer and have a separate method cast short to 2 bytes string;
+        string recordStr = to_string(r.idxField2End) + r.field1 + r.field2 + r.field3;
+        b = b->insertRecordStringToBlock(recordStr);
+    }
 
+    cout<<  "The first record is: "<< dummy->getRecordAsString(dummy->getNumOfRecord()) << endl;
+    cout<<  "The last record is: "<< b->getRecordAsString(b->getNumOfRecord()) << endl;
+
+    int cnt = 0;
+    float emptyBytes = 0;
+    while (dummy != nullptr){
+        cnt ++;
+        emptyBytes += dummy->sizeOfEmptyBytes();
+        dummy = dummy->next;
+    }
+    cout<< "There are totally " << cnt << " 1K blocks to store all the txt file"<<endl;
+    float percentage = (emptyBytes)/(1024*cnt)*100;
+    cout<< "The percentage of empty bytes is: "<<percentage<<"%" << endl;
     return 0;
 }
