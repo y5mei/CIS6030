@@ -88,7 +88,7 @@ int main() {
     int mynum = f1();
     cout << mynum << endl;
 
-    BlockListNode b;
+    BlockListNode b = BlockListNode(30);
     cout<<b.getNumOfRecord()<<endl;
     b.insertRecordStringToBlock("abcde 12345");
     short res1 = b.getJumpOfRecord(1);
