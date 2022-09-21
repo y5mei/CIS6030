@@ -13,6 +13,5 @@ add_executable(Google_tests test1.cpp RecordTests.cpp BPlusTreeTests.cpp)
 
 # linking Google_Tests_run with DateConverter_lib which will be tested
 target_link_libraries(Google_tests DateConverter_libxxx)
-target_link_libraries(Google_tests Database_lib)
-target_link_libraries(Google_tests BPlusTree_lib)
+target_link_libraries(Google_tests Database_lib BPlusTree_lib)
 target_link_libraries(Google_tests gtest gtest_main)

@@ -14,5 +14,8 @@ add_subdirectory(DateConverter_lib)
 include_directories(Database_lib)
 add_subdirectory(Database_lib)
 
+include_directories(BPlusTree_lib)
+add_subdirectory(BPlusTree_lib)
+
 target_link_libraries(Database_run Database_lib)
 add_subdirectory(Google_tests)
