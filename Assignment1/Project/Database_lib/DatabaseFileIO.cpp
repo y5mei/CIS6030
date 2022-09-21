@@ -76,7 +76,7 @@ void BlockListNode::setJumpOfRecord(short n, short j) {
 }
 
 // insert a string into the block
-BlockListNode* BlockListNode::insertRecordStringToBlock(string str) {
+BlockListNode *BlockListNode::insertRecordStringToBlock(string str) {
     // TODO: Refuse to insert into the current block if the empty space left is not enough to hold the new str
     // need to create a new block, and link to it.
 
@@ -85,8 +85,8 @@ BlockListNode* BlockListNode::insertRecordStringToBlock(string str) {
         throw invalid_argument("not enough empty space to hold new str, need to create a linked list");
     }
     // if the size of the input record is larger than the available empty bytes, we need to create a new node, and link the new node as next of the prev node
-    if (sizeOfEmptyBytes() < (str.size() + 2)){
-        BlockListNode* nextNode = generateNextNode(str);
+    if (sizeOfEmptyBytes() < (str.size() + 2)) {
+        BlockListNode *nextNode = generateNextNode(str);
         return nextNode;
     }
 
@@ -115,7 +115,7 @@ BlockListNode *BlockListNode::generateNextNode(string str) {
     // The following code does not work, bad_ptr always point to the same address;
     //    BlockListNode n = BlockListNode(newSize);
     //    BlockListNode* bad_ptr = &n;
-    BlockListNode* prevTail = next;
+    BlockListNode *prevTail = next;
     this->next = ptr;
     ptr->next = prevTail;
     ptr->insertRecordStringToBlock(str);
@@ -161,3 +161,35 @@ string BlockListNode::getRecordAsString(short n) {
     result[end - start + 1] = '\0';
     return string(result);
 }
+
+int Record::endOfField2(std::string str) {
+    int cnt = 3;
+    int result;
+    for (int i = 0; i < str.size(); i++) {
+        if (isspace(str[i])) {
+            cnt -= 1;
+            if (cnt == 2 && i != 9) {
+                throw invalid_argument("The length of first field must be 9 bytes!");
+            }
+            if (cnt == 0) {
+                return i-1;
+            }
+        }
+    }
+    if (cnt == 1) return str.size()-1;
+    if (cnt != 0) {
+        throw invalid_argument("Input str is invalid, you need at least 3 spaces in the str.");
+    }
+}
+
+Record::Record(std::string inputText) {
+    if (inputText.size() < 11) {
+        throw invalid_argument("Input Text must be longer than 10 bytes, with 9 Bytes as Field1, separate by space");
+    }
+    field1 = inputText.substr(0, 9);
+    idxField2End = endOfField2(inputText);
+    field2 = inputText.substr(10, idxField2End + 1 - 10);
+    int length = inputText.size();
+    field3 = inputText.substr(min(idxField2End + 2, length));
+}
+Record::Record() {}

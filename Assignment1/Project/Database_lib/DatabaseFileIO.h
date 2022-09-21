@@ -35,4 +35,19 @@ public:
     std::string getRecordAsString(short n);
 };
 
+class Record{
+public:
+    std::string field1;
+    std::string field2;
+    std::string field3;
+    short idxField2End;
+
+    // returns the end idx of the second field (the space),
+    // the start idx of the third field will be idx + 1
+    // Example: a b c def, this method will return 4
+    int endOfField2(std::string str);
+    Record(std::string str);
+    Record();
+};
+
 #endif //PROJECT_DATABASEFILEIO_H
