@@ -9,7 +9,7 @@ include_directories(../DateConverter_lib/)
 include_directories(../BPlusTree_lib/)
 
 # adding the Google_Tests_run target
-add_executable(Google_tests test1.cpp RecordTests.cpp BPlusTreeTests.cpp)
+add_executable(Google_tests TestMain.cpp RecordTests.cpp BPlusTreeTests.cpp BlockTests.cpp)
 
 # linking Google_Tests_run with DateConverter_lib which will be tested
 target_link_libraries(Google_tests DateConverter_libxxx)
