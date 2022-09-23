@@ -38,3 +38,28 @@ T Node<T>::search(T k) {
         }
     }
 }
+
+template<class T>
+Node<T>* Node<T>::searchNode(T k) {
+    if(isLeaf){
+        return this;
+    }else{
+        auto firstKey = this->keys.front();
+        auto lastKey = this->keys.back();
+        auto currKey = k;
+        if (currKey < firstKey) {
+            return this->children[0]->searchNode(k);
+        } else if (currKey >= lastKey) {
+            return this->children.back()->searchNode(k);
+        } else {
+            for (int i = 0; i < this->keys.size() - 1; ++i) {
+                auto ithKey = this->keys[i];
+                auto iPlusOneKey = this->keys[i + 1];
+                if (currKey >= ithKey && currKey < iPlusOneKey) {
+                    return this->children[i + 1]->searchNode(k);
+                }
+            }
+            throw invalid_argument("Didn't find the subTree at where it should be!");
+        }
+    }
+}
