@@ -48,8 +48,13 @@ public:
     Node(int size = 8, bool isLeaf = false);
 
     T search(T k);
+    Node* searchNode(T k);
+    void insert(T k, T v);
 };
-
+template<class T>
+void Node<T>::insert(T k, T v) {
+    // if the leaf node is not previously fulled, insert it in order;
+}
 
 int BPlusTreeReturn(std::string input);
 
