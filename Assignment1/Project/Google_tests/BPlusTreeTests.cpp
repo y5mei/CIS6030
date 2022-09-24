@@ -2,12 +2,12 @@
 #include "BPlusTree.h"
 #include <string>
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
 class BPlusTreeTest : public ::testing::Test {
 protected:
-    int aaa  =100;
     Node<int> n1 = Node<int>(3, true);
     Node<int> n2 = Node<int>(3, true);
     Node<int> n3 = Node<int>(3, true);
@@ -33,10 +33,23 @@ protected:
         n6.values =  {43, 47};
         m1.keys = {7};
         m1.children = {&n1, &n2};
+        n1.parent = &m1;
+        n2.parent = &m1;
         m2.keys = {23, 31, 43};
         m2.children = {&n3, &n4, &n5, &n6};
+        n3.parent = &m2;
+        n4.parent = &m2;
+        n5.parent = &m2;
+        n6.parent = &m2;
         r.keys = {13};
         r.children = {&m1, &m2};
+        m1.parent = &r;
+        m2.parent = &r;
+        n1.next = &n2;
+        n2.next = &n3;
+        n3.next = &n4;
+        n4.next = &n5;
+        n5.next = &n6;
     }
 };
 
@@ -92,4 +105,30 @@ TEST_F(BPlusTreeTest, Node_Value_Can_Be_Searched) {
     ASSERT_EQ(r.search(41),41);
     ASSERT_EQ(r.search(43),43);
     ASSERT_EQ(r.search(47),47);
+}
+
+TEST(Sort_Permutation, Two_Vector_Can_Be_Sort_Together){
+    vector<int> va = {3,4,2,1};
+    vector<string> vb = {"3","4","2","1"};
+    sortPairs<int, string>(va, vb);
+    ASSERT_EQ(va[0], 1);
+    ASSERT_EQ(va[3], 4);
+    ASSERT_EQ(vb[0], "1");
+    ASSERT_EQ(vb[3], "4");
+}
+
+TEST_F(BPlusTreeTest, Value_Can_Be_Inserted_To_LeafNode_With_Empty_Slots){
+//    r.insert(30, 30);
+//    ASSERT_EQ(r.search(30), 30);
+    r.insert(6, 6);
+    ASSERT_EQ(r.search(6), 6);
+    ASSERT_EQ(n1.parent, &m1);
+    ASSERT_EQ(m1.children.size(), 3);
+    ASSERT_EQ(m1.keys.size(), 2);
+
+    ASSERT_EQ(m1.keys[0], 5);
+    ASSERT_EQ(m1.keys[1], 7);
+    ASSERT_EQ(m1.children[0], &n1);
+    ASSERT_EQ(m1.children[1], n1.next);
+    ASSERT_EQ(m1.children[2], &n2);
 }

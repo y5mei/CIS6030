@@ -1,5 +1,7 @@
 #include <iostream>
 #include "BPlusTree.h"
+#include <numeric>
+#include <algorithm> // sort
 
 
 template<class T>
@@ -13,7 +15,7 @@ Node<T>::Node(int size, bool isLeaf) {
 template<class T>
 T Node<T>::search(T k) {
 
-    Node<T>* leafNode = searchNode(k);
+    Node<T> *leafNode = searchNode(k);
     for (int i = 0; i < leafNode->keys.size(); ++i) {
         if (leafNode->keys[i] == k) {
             return leafNode->values[i];
@@ -24,10 +26,10 @@ T Node<T>::search(T k) {
 
 // Search for the leaf node where the key, k, should be placed;
 template<class T>
-Node<T>* Node<T>::searchNode(T k) {
-    if(isLeaf){
+Node<T> *Node<T>::searchNode(T k) {
+    if (isLeaf) {
         return this;
-    }else{
+    } else {
         auto firstKey = this->keys.front();
         auto lastKey = this->keys.back();
         auto currKey = k;
@@ -47,3 +49,4 @@ Node<T>* Node<T>::searchNode(T k) {
         }
     }
 }
+
