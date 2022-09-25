@@ -15,3 +15,4 @@ add_executable(Google_tests TestMain.cpp RecordTests.cpp BPlusTreeTests.cpp Bloc
 target_link_libraries(Google_tests DateConverter_libxxx)
 target_link_libraries(Google_tests Database_lib BPlusTree_lib)
 target_link_libraries(Google_tests gtest gtest_main)
+target_link_libraries(Google_tests gmock gmock_main)

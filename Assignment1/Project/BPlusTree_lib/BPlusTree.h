@@ -76,6 +76,7 @@ class BPlusTree {
 public:
     Node<T>* root;
     void insert(T key, T val);
+    void insert(T keyValue);
     BPlusTree(int size);
 
 };
@@ -88,9 +89,15 @@ BPlusTree<T>::BPlusTree(int size) {
 template<class T>
 void BPlusTree<T>::insert(T key, T val) {
     root->insert(key, val);
-    cout<<" trying to find root:"<<endl;
     root = root->findRoot();
 }
+
+template<class T>
+void BPlusTree<T>::insert(T key) {
+    root->insert(key, key);
+    root = root->findRoot();
+}
+
 
 
 int BPlusTreeReturn(std::string input);

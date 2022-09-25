@@ -1,10 +1,13 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"  // Brings in Google Mock.
 #include "BPlusTree.h"
 #include <string>
 #include <vector>
 #include <iostream>
 
 using namespace std;
+using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 
 class BPlusTreeListNodeTest : public ::testing::Test {
 protected:
@@ -230,5 +233,73 @@ TEST(BPlusTreeTest, Value_Can_Be_Inserted_To_Empty_Head) {
 
     b.insert(31, 31);
     b.insert(37, 37);
+    auto m1 = b.root->children[0];
+    auto m2 = b.root->children[1];
+    auto n5 = m2->children[1];
+    EXPECT_THAT(b.root->keys, ElementsAre(23));
+    EXPECT_THAT(m1->keys, ElementsAre(7, 13));
+    EXPECT_THAT(m2->keys, ElementsAre(31));
+    EXPECT_THAT(n1->keys, ElementsAre(2,3,5));
+    EXPECT_THAT(n2->keys, ElementsAre(7,11));
+    EXPECT_THAT(n3->keys, ElementsAre(13, 17));
+    EXPECT_THAT(n4->keys, ElementsAre(23, 29));
+    EXPECT_THAT(n5->keys, ElementsAre(31, 37));
+    ASSERT_EQ(m1->next, nullptr);
+}
 
+TEST(BPlusTreeTest, Build_A_BTree_From_Null) {
+
+    //Test Example from Youtube Video:
+    //https://www.youtube.com/watch?v=DqcZLulVJ0M
+    BPlusTree<int> b = BPlusTree<int>(3);
+    vector<int> arr{1, 4, 7, 10, 17};
+    for(int n: arr){
+        b.insert(n);
+    }
+    EXPECT_THAT(b.root->keys, ElementsAre(7));
+    EXPECT_THAT(b.root->children[0]->keys, ElementsAre(1, 4));
+    EXPECT_THAT(b.root->children[1]->keys, ElementsAre(7, 10, 17));
+
+    b.insert(21);
+    b.insert(31);
+    b.insert(25);
+    b.insert(19);
+    EXPECT_THAT(b.root->keys, ElementsAre(7, 17, 25));
+
+    b.insert(20);
+    b.insert(28);
+    EXPECT_THAT(b.root->keys, ElementsAre(20));
+    EXPECT_THAT(b.root->children[0]->keys, ElementsAre(7, 17));
+    EXPECT_THAT(b.root->children[1]->keys, ElementsAre(25));
+    auto m1 = b.root->children[0];
+    auto m2 = b.root->children[1];
+    auto n1 = b.root->children[0]->children[0];
+    auto n2 = b.root->children[0]->children[1];
+    auto n3 = b.root->children[0]->children[2];
+    auto n4 = b.root->children[1]->children[0];
+    auto n5 = b.root->children[1]->children[1];
+    EXPECT_THAT(n1->keys, ElementsAre(1, 4));
+    EXPECT_THAT(n2->keys, ElementsAre(7, 10));
+    EXPECT_THAT(n3->keys, ElementsAre(17, 19));
+    EXPECT_THAT(n4->keys, ElementsAre(20, 21));
+    EXPECT_THAT(n5->keys, ElementsAre(25, 28, 31));
+    EXPECT_THAT(m1->children, ElementsAre(n1, n2, n3));
+    EXPECT_THAT(m2->children, ElementsAre(n4, n5));
+    EXPECT_THAT(n1->parent, m1);
+    EXPECT_THAT(n2->parent, m1);
+    EXPECT_THAT(n3->parent, m1);
+    EXPECT_THAT(n4->parent, m2);
+    EXPECT_THAT(n5->parent, m2);
+    b.insert(42);
+    auto n6 = n5->next;
+    EXPECT_THAT(b.root->keys, ElementsAre(20));
+    EXPECT_THAT(m1->keys, ElementsAre(7, 17));
+    EXPECT_THAT(m2->keys, ElementsAre(25, 31));
+    EXPECT_THAT(b.root->children, ElementsAre(m1, m2));
+    EXPECT_THAT(m1->parent, b.root);
+    EXPECT_THAT(m2->parent, b.root);
+    EXPECT_THAT(n5->keys, ElementsAre(25, 28));
+    EXPECT_THAT(n6->keys, ElementsAre(31, 42));
+    EXPECT_THAT(m1->children, ElementsAre(n1, n2, n3));
+    EXPECT_THAT(m2->children, ElementsAre(n4, n5, n6));
 }

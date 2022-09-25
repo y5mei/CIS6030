@@ -111,9 +111,8 @@ void Node<T>::insert(T k, T v) {
 
         // insert the smallest key in M and the pointer to M into N's parent
         Node *parentOfN = nodeN->parent;
-        cout<<"=============== checking the parent of nodeN ==============="<<endl;
+
         if (parentOfN == nullptr) {
-            cout<<"=============== need to generate new parent ==============="<<endl;
             // the root can have as few as 2 children if it is not a leaf
             parentOfN = new Node<T>(MAX_SIZE, false);
             parentOfN->keys.push_back(nodeM->keys.front());
@@ -133,7 +132,6 @@ void Node<T>::insert(T k, T v) {
 template<class T>
 void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
     if (this->MAX_SIZE > this->keys.size()) {
-        cout << "insert the new childNode to a parentNode with space" << endl;
         // increase the size of keys and children by one, fill with the key and pointer
         this->children.push_back(newChildNode);
         this->keys.push_back(newKey);
@@ -162,7 +160,6 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         // update parent
         newChildNode->parent = this;
     } else {
-        cout << "This node is currently full" << endl;
         // sort the pointers, leave the first ceil((m+2)/2) in N and leave the rest in M
         Node *parentN = this;
         Node *parentM = new Node<T>(this->MAX_SIZE, this->isLeaf);
@@ -195,14 +192,15 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         vector<T> parentMKeys(keys.end() - floor(MAX_SIZE / 2.0), keys.end());
         T keyForGrantParent = keys.at(ceil(MAX_SIZE / 2.0));
 
-        // setup parent node for current newNode
-        if (find(parentNChild.begin(), parentNChild.end(), newChildNode) != parentNChild.end())
-            newChildNode->parent = parentN;
-        else
-            newChildNode->parent = parentM;
+        // Setup parent node for children in both N and M
+        for (Node *ptr: parentNChild) {
+            ptr->parent = parentN;
+        }
+        for (Node *ptr: parentMChild) {
+            ptr->parent = parentM;
+        }
 
         // set the keys and ptrs to nodeM and nodeN
-        cout << "Insert the new nodeM to grantParent" << endl;
         parentN->keys = parentNKeys;
         parentN->children = parentNChild;
         parentM->keys = parentMKeys;
@@ -210,20 +208,30 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
 
         // try to insert the new node, nodeM, into the grandParentNode
         Node *grantParent = parentN->parent;
-        cout <<"===== need to generate an empty grandparent node here" <<endl;
         // copy code from line 117;
-        cout << *grantParent << endl;
+        if (grantParent == nullptr) {
+            // the root can have as few as 2 children if it is not a leaf
+            grantParent = new Node<T>(MAX_SIZE, false);
+            grantParent->children.push_back(parentN);
+            grantParent->children.push_back(parentM);
+            Node *gc = parentM->children[0];
+            grantParent->keys.push_back(gc->keys[0]);
+
+            parentN->parent = grantParent;
+            parentM->parent = grantParent;
+            //TODO: need to return this new parentNode as root;
+            return;
+        }
         grantParent->insertLeafNodeIntoInteriorNode(keyForGrantParent, parentM);
     }
 }
 
 template<class T>
 Node<T> *Node<T>::findRoot() {
-    Node* curr = this;
-    while (curr->parent != nullptr){
+    Node *curr = this;
+    while (curr->parent != nullptr) {
         curr = curr->parent;
     }
-    cout<< *curr <<endl;
     return curr;
 }
 
