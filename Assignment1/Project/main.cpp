@@ -8,25 +8,7 @@
 
 using namespace std;
 
-// read a file and get vector of sorted records
-vector<Record> readRawTxtFile(string fileName = "../A1_data.txt") {
-    string inputText;
-    // Read from the text file
-    ifstream MyReadFile(fileName);
-    int cnt = 0;
-//    int maxLine2Read = 30;
-    vector<Record> records;
-    while (getline(MyReadFile, inputText)) {
-        // Output the text from the file
-        records.push_back(Record(inputText));
-//        Record &currentRecord = records.back();
-        cnt++;
-    }
-    return records;
-}
-
 int main() {
-
 //    sort the input file based on Field1
     vector<Record> records = readRawTxtFile();
     sort(records.begin(), records.end(), [](Record a, Record b) { return (a.field1 < b.field1); });

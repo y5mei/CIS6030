@@ -6,6 +6,7 @@
 
 double f1();
 
+
 class BlockListNode {
 public:
     static const short MAX_SIZE = 1024;
@@ -58,5 +59,7 @@ private:
 BlockListNode* readFileFromHardDisk(std::string filename, int blockSize = 1024);
 
 BlockListNode* readBlockWithLSeek(std::string filename, int blockNum, int blockSize = 1024);
+
+std::vector<Record> readRawTxtFile(std::string fileName = "../A1_data.txt");
 
 #endif //PROJECT_DATABASEFILEIO_H

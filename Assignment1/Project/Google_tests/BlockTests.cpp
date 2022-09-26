@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 #include "DatabaseFileIO.h"
+#include <vector>
+#include <filesystem>
 
 
 TEST(Database_lib, BlockListNode_Default_Num_0) {
@@ -165,4 +167,37 @@ TEST(Database_lib, Generate_Linked_List_via_Insert) {
         dummy = dummy->next;
     }
     ASSERT_EQ(cnt, 3);
+}
+
+// This test cannot pass on Win machine due to LSeek()
+TEST(Database_lib_new, Read_From_Raw_File_And_Save_To_Disk){
+    std::vector<Record> records = readRawTxtFile("../../A1_data.txt");
+    // let's load all the records into the block linked list:
+    BlockListNode *b = new BlockListNode();
+    BlockListNode *dummyHead = b;
+    int cnt = 0;
+    for (auto r: records) {
+        b = b->insertRecordStringToBlock(r.content);
+        cnt ++;
+    }
+    BlockListNode::saveToDisk(dummyHead, "database_file.txt");
+    // read everything back
+    BlockListNode* readBackHead = readFileFromHardDisk("database_file.txt", 1024);
+    ASSERT_EQ(readBackHead->getNumOfRecord(), 14);
+    ASSERT_EQ(readBackHead->next->getNumOfRecord(), 14);
+    ASSERT_EQ(readBackHead->next->next->getNumOfRecord(), 14);
+    ASSERT_EQ(readBackHead->next->next->next->getNumOfRecord(), 13);
+
+    BlockListNode* singleBlock1 = readBlockWithLSeek("database_file.txt", 1, 1024);
+    BlockListNode* singleBlock2 = readBlockWithLSeek("database_file.txt", 2, 1024);
+    BlockListNode* singleBlock3 = readBlockWithLSeek("database_file.txt", 3, 1024);
+    BlockListNode* singleBlock4 = readBlockWithLSeek("database_file.txt", 4, 1024);
+    BlockListNode* singleBlockLast = readBlockWithLSeek("database_file.txt", 3365, 1024);
+
+    std::string lastRecord = "zzzjzagrk program at the university of guelph who have financial ";
+    ASSERT_EQ(singleBlock1->getNumOfRecord(),14);
+    ASSERT_EQ(singleBlock2->getNumOfRecord(),14);
+    ASSERT_EQ(singleBlock3->getNumOfRecord(),14);
+    ASSERT_EQ(singleBlock4->getNumOfRecord(),13);
+    ASSERT_EQ(singleBlockLast->getRecordAsString(6),lastRecord);
 }

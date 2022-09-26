@@ -7,7 +7,8 @@
 #include <bitset>
 #include <tuple>
 #include <stdexcept>
-
+#include <vector>
+#include <filesystem>
 #include <unistd.h> // lseek
 
 
@@ -28,7 +29,7 @@ BlockListNode *readBlockWithLSeek(std::string filename, int blockNum, int blockS
     if(blockNum==1){
         shift = 0L;
     }
-    fin.seekg(shift, ios::cur);
+    fin.seekg(shift, ios::beg);
 
     char buffer[blockSize];
     if(fin.good()){
@@ -258,3 +259,21 @@ Record::Record(std::string inputText) {
     content = inputText;
 }
 Record::Record() {}
+
+// read a file and get vector of sorted records
+std::vector<Record> readRawTxtFile(string fileName) {
+    string inputText;
+    // Read from the text file
+    ifstream MyReadFile(fileName);
+    int cnt = 0;
+//    int maxLine2Read = 30;
+    vector<Record> records;
+    while (getline(MyReadFile, inputText)) {
+        // Output the text from the file
+        records.push_back(Record(inputText));
+//        Record &currentRecord = records.back();
+        cnt++;
+    }
+    sort(records.begin(), records.end(), [](Record a, Record b) { return (a.field1 < b.field1); });
+    return records;
+}
