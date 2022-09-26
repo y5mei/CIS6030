@@ -303,3 +303,20 @@ TEST(BPlusTreeTest, Build_A_BTree_From_Null) {
     EXPECT_THAT(m1->children, ElementsAre(n1, n2, n3));
     EXPECT_THAT(m2->children, ElementsAre(n4, n5, n6));
 }
+
+TEST(BPlusTreeTest, BTree_Values_Can_Be_Searched) {
+
+    //Test Example from Youtube Video:
+    //https://www.youtube.com/watch?v=DqcZLulVJ0M
+    BPlusTree<int> b = BPlusTree<int>(3);
+    vector<int> arr{1, 4, 7, 10, 17, 21, 31, 25, 19, 20, 28, 42};
+    for(int n: arr){
+        b.insert(n);
+    }
+
+    for (int n: arr){
+        EXPECT_THAT(b.search(n), n);
+    }
+
+
+}

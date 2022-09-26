@@ -35,7 +35,7 @@ TEST(Database_lib, Write_A_Block_Until_Full) {
     EXPECT_EQ(b.getJumpOfRecord(1), 9);
     EXPECT_EQ(b.getJumpOfRecord(2), 6);
     EXPECT_EQ(b.block[11], '2');
-    EXPECT_EQ(b.sizeOfEmptyBytes(), 1);
+    EXPECT_EQ(b.getEmptyBytes(), 1);
     // this tests _that_ the expected exception is thrown
     EXPECT_THROW({
                      try {
@@ -79,6 +79,63 @@ TEST(Database_lib, Blocks_Are_Like_LinkedList) {
     ASSERT_EQ(cnt, 3);
 }
 
+TEST(Database_lib, Generate_Linked_From_A_Block_Of_ContentStr_From_Disk) {
+    BlockListNode b = BlockListNode(12);
+    b.insertRecordStringToBlock("012");
+    b.insertRecordStringToBlock("abc");
+    ASSERT_EQ(b.getRecordAsString(1),"012");
+    ASSERT_EQ(b.getRecordAsString(2),"abc");
+    ASSERT_EQ(b.getEmptyBytes(),1);
+    ASSERT_EQ(sizeof(b.block), 1024);
+}
+
+// save 3 blocks with 12 bytes block size to hard disk
+// and read the whole file back as a linked list of block
+// assert the records can be obtained;
+// Need to do the same thing when doing insert and delete
+TEST(Database_lib, Save_A_Block_To_Disk_And_Read_It_Back) {
+    BlockListNode b = BlockListNode(12);
+    BlockListNode* curr = &b;
+    curr = curr->insertRecordStringToBlock("012");
+    curr = curr->insertRecordStringToBlock("abc");
+    curr = curr->insertRecordStringToBlock("345");
+    curr = curr->insertRecordStringToBlock("def");
+    curr = curr->insertRecordStringToBlock("789");
+    ASSERT_EQ(b.getRecordAsString(1),"012");
+    ASSERT_EQ(b.getRecordAsString(2),"abc");
+    ASSERT_EQ(b.next->getRecordAsString(1),"345");
+    ASSERT_EQ(b.next->getRecordAsString(2),"def");
+
+    BlockListNode::saveToDisk(&b, "testdatafile.txt");
+    BlockListNode* read = readFileFromHardDisk("testdatafile.txt", 12);
+    ASSERT_EQ(read->getEmptyBytes(), 1);
+    ASSERT_EQ(read->getRecordAsString(1), "012");
+    ASSERT_EQ(read->getRecordAsString(2), "abc");
+    ASSERT_EQ(read->next->getRecordAsString(1), "345");
+    ASSERT_EQ(read->next->getRecordAsString(2), "def");
+    ASSERT_EQ(read->next->next->getRecordAsString(1), "789");
+}
+
+TEST(Database_lib, Save_A_Block_To_Disk_And_Read_Only_One_Block_Back_With_Offset) {
+    BlockListNode b = BlockListNode(12);
+    BlockListNode* curr = &b;
+    curr = curr->insertRecordStringToBlock("012");
+    curr = curr->insertRecordStringToBlock("abc");
+    curr = curr->insertRecordStringToBlock("345");
+    curr = curr->insertRecordStringToBlock("def");
+    curr = curr->insertRecordStringToBlock("789");
+
+    BlockListNode::saveToDisk(&b, "testdatafile.txt");
+    BlockListNode* read1 = readBlockWithLSeek("testdatafile.txt", 1, 12);
+    ASSERT_EQ(read1->getRecordAsString(1), "012");
+    ASSERT_EQ(read1->getRecordAsString(2), "abc");
+    BlockListNode* read2 = readBlockWithLSeek("testdatafile.txt", 2, 12);
+    ASSERT_EQ(read2->getRecordAsString(1), "345");
+    ASSERT_EQ(read2->getRecordAsString(2), "def");
+    BlockListNode* read3 = readBlockWithLSeek("testdatafile.txt", 3, 12);
+    ASSERT_EQ(read3->getRecordAsString(1), "789");
+}
+
 // generate 3 block nodes via the insert method
 TEST(Database_lib, Generate_Linked_List_via_Insert) {
     BlockListNode* b1 = new BlockListNode(8);
@@ -86,7 +143,7 @@ TEST(Database_lib, Generate_Linked_List_via_Insert) {
     // cnt, 0, 3, \0, \0, 0, 1
     b1 = b1->insertRecordStringToBlock("01");
     ASSERT_EQ(b1->getRecordAsString(1),"01");
-    ASSERT_EQ(b1->sizeOfEmptyBytes(), 3);
+    ASSERT_EQ(b1->getEmptyBytes(), 3);
 
     b1 = b1->insertRecordStringToBlock("02");
     ASSERT_EQ(b1->getRecordAsString(1),"02");

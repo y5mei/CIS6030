@@ -47,19 +47,16 @@ TEST(Database_lib, Record_Should_Have_Valid_Field_Two) {
     // But Field3 is optional
     Record r2 = Record("123456789 f 2");
     ASSERT_EQ(r2.field1, "123456789");
-    ASSERT_EQ(r2.idxField2End, 12);
     ASSERT_EQ(r2.field2, "f 2");
     ASSERT_EQ(r2.field3, "");
 
     Record r3 = Record("123456789 f 2 ");
     ASSERT_EQ(r3.field1, "123456789");
-    ASSERT_EQ(r3.idxField2End, 12);
     ASSERT_EQ(r3.field2, "f 2");
     ASSERT_EQ(r3.field3, "");
 
     Record r4 = Record("123456789 f 2 field3 more field3");
     ASSERT_EQ(r4.field1, "123456789");
-    ASSERT_EQ(r4.idxField2End, 12);
     ASSERT_EQ(r4.field2, "f 2");
     ASSERT_EQ(r4.field3, "field3 more field3");
 }

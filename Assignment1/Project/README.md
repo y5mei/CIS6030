@@ -3,7 +3,26 @@
 * Read the A1_data.txt file, read by line and construct the record objects
 * Sort these records
 * Construct Blocks from these sorted records (the blocks should be linked list)
-* Save the blocks to a file in hard disk
+* Build a B+Tree via a nested loop (`for each block for each record`)
+* Save the B+Tree as a hard disk file;
+* Save the blocks as a file in hard disk;
+
+### During insert [Do I need to maintain the order of block?]
+
+#### lazy implement:
+* just insert the new record to the tail of the block linked list [unsorted]
+* use B+Tree to iter all the record in order, create another in-order block linked list in memory
+* save the new block linked list in disk
+* generate a new B+ Tree from the new block linked list and save to disk;
+
+#### eager implement
+* All the current blocks are in the RAM as a linked list
+* B+Tree can help me find the element less than the current key
+* Say the previous record is Block 5 record 6;
+* Get the block object of the previous key [How? I can loop from the head to get the block];
+* try to insert the new record inside [need to shift the existing record, might need to create new block node, and link it together]
+* Need to save the updated blocks to hard disk
+* Need to save the new B+Tree file to hard disk
 
 ## B+Tree
 

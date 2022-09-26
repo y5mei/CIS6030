@@ -2,10 +2,14 @@
 // Created by Yao-Wen Mei on 2022/9/16.
 //
 #include <iostream>
+#include <fstream>
 #include "DatabaseFileIO.h"
 #include <bitset>
 #include <tuple>
 #include <stdexcept>
+
+#include <unistd.h> // lseek
+
 
 using namespace std;
 
@@ -15,25 +19,35 @@ double f1() {
     return 10000000000;
 }
 
+BlockListNode *readBlockWithLSeek(std::string filename, int blockNum, int blockSize) {
+    BlockListNode* b = new BlockListNode(blockSize);
+    ifstream fin;
+    fin.open(filename);
+
+    long shift = (blockNum-1)*blockSize;
+    if(blockNum==1){
+        shift = 0L;
+    }
+    fin.seekg(shift, ios::cur);
+
+    char buffer[blockSize];
+    if(fin.good()){
+        fin.read((char *)& buffer, sizeof(buffer));
+        for(int i=0;i<blockSize;i++){
+            b->block[i] = buffer[i];
+        }
+    }
+    fin.close();
+    return b;
+}
+
+
+
 /**
  * Definition for singly-linked list.
  * block has 1024 bytes, the 1st char represents how many records in the block, and can be read directly as short (only the lower 8 bits of short will be used anyways);
  * The next n chars are representing the end position of each records;
  */
-//class BlockListNode {
-//    char block[1024] = {'\0'};
-//    BlockListNode *next;
-//
-//    short getNumOfRecord();
-//
-//public:
-//    BlockListNode() : next(nullptr) {}
-////
-////    BlockListNode(int x) : val(x), next(nullptr) {}
-////
-////    BlockListNode(int x, BlockListNode *next) : val(x), next(next) {}
-//};
-
 BlockListNode::BlockListNode(short size) {
     block[0] = '\0'; // initially, there are 0 records in the block
     ACTUAL_SIZE = size;
@@ -85,7 +99,7 @@ BlockListNode *BlockListNode::insertRecordStringToBlock(string str) {
         throw invalid_argument("not enough empty space to hold new str, need to create a linked list");
     }
     // if the size of the input record is larger than the available empty bytes, we need to create a new node, and link the new node as next of the prev node
-    if (sizeOfEmptyBytes() < (str.size() + 2)) {
+    if (getEmptyBytes() < (str.size() + 2)) {
         BlockListNode *nextNode = generateNextNode(str);
         return nextNode;
     }
@@ -125,7 +139,7 @@ BlockListNode *BlockListNode::generateNextNode(string str) {
 }
 
 //calculate how many empty bytes are available in the current block.
-short BlockListNode::sizeOfEmptyBytes() {
+short BlockListNode::getEmptyBytes() {
     short numRecord = getNumOfRecord();
     if (numRecord == 0) {
         return ACTUAL_SIZE - 1;
@@ -162,6 +176,56 @@ string BlockListNode::getRecordAsString(short n) {
     return string(result);
 }
 
+// write all the blocks from head to the tail to a database file;
+void BlockListNode::saveToDisk(BlockListNode* head, std::string filename) {
+    ofstream FileToWrite(filename, ofstream::trunc); // erase the content before write
+    char content[head->ACTUAL_SIZE];
+    BlockListNode* dummy = head;
+    while (dummy != nullptr){
+        // get only the subslice of the actual size
+        for(int i = 0; i < sizeof(content); ++i){
+            content[i] = dummy->block[i];
+        }
+        FileToWrite.write( (char *) content, sizeof(content));
+        dummy = dummy->next;
+    }
+    // Close the file
+    FileToWrite.close();
+}
+
+// read a file via filename, and create a linked list of blocks
+// return the head of the linked list
+// TODO: Need to know when to delete the new nodes
+BlockListNode* readFileFromHardDisk(string filename, int blockSize){
+    //ifstream fin(filename, ios::binary);
+    BlockListNode* b = new BlockListNode(blockSize);
+    BlockListNode* dummyHead = b;
+    ifstream fin(filename);
+    char buffer[blockSize];
+    while(!fin.eof()){
+        fin.read((char *)& buffer, sizeof(buffer));
+        for(int i=0;i<blockSize;i++){
+            b->block[i] = buffer[i];
+        }
+        if (fin.peek()=='\n') break; // avoid read the last line twice
+        b->next = new BlockListNode(blockSize);
+        b = b->next;
+    }
+    fin.close();
+    return dummyHead;
+}
+
+BlockListNode::BlockListNode(std::string blockContent) {
+    ACTUAL_SIZE = blockContent.size();
+    if (ACTUAL_SIZE > 1024){
+        throw invalid_argument("Block size cannot be larger than 1024");
+    }
+    for(int i = 0; i<MAX_SIZE; ++i){
+        block[i] = blockContent[i];
+    }
+}
+
+
 int Record::endOfField2(std::string str) {
     int cnt = 3;
     int result;
@@ -191,5 +255,6 @@ Record::Record(std::string inputText) {
     field2 = inputText.substr(10, idxField2End + 1 - 10);
     int length = inputText.size();
     field3 = inputText.substr(min(idxField2End + 2, length));
+    content = inputText;
 }
 Record::Record() {}

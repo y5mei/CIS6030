@@ -78,6 +78,7 @@ public:
     void insert(T key, T val);
     void insert(T keyValue);
     BPlusTree(int size);
+    T search(T key);
 
 };
 
@@ -98,9 +99,13 @@ void BPlusTree<T>::insert(T key) {
     root = root->findRoot();
 }
 
-
-
 int BPlusTreeReturn(std::string input);
+
+template<class T>
+T BPlusTree<T>::search(T key) {
+    root = root->findRoot();
+    return root->search(key);
+}
 
 #include "BPlusTree.tpp"
 

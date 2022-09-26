@@ -72,7 +72,7 @@ void Node<T>::insert(T k, T v) {
     if (nodeN->MAX_SIZE > nodeN->keys.size()) {
         nodeN->keys.push_back(k);
         nodeN->values.push_back(v);
-        sortPairs<int, int>(nodeN->keys, nodeN->values);
+        sortPairs<T, T>(nodeN->keys, nodeN->values);
 
         // adjust the parent node if necessary
         // TODO: [Ask TA, I feel this code below will never be triggered, the example from class, insert 22 is incorrect]
@@ -96,7 +96,7 @@ void Node<T>::insert(T k, T v) {
 
         nodeN->keys.push_back(k);
         nodeN->values.push_back(v);
-        sortPairs<int, int>(nodeN->keys, nodeN->values);
+        sortPairs<T, T>(nodeN->keys, nodeN->values);
 
         int resizeSize = ceil((MAX_SIZE + 1.0) / 2.0);
         vector<T> split_keys_lo(nodeN->keys.begin(), nodeN->keys.begin() + resizeSize);
