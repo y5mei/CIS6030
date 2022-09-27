@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <vector>
 #include <filesystem>
+#include <algorithm>
 #include <unistd.h> // lseek
 
 
@@ -198,7 +199,6 @@ void BlockListNode::saveToDisk(BlockListNode* head, std::string filename) {
 // return the head of the linked list
 // TODO: Need to know when to delete the new nodes
 BlockListNode* readFileFromHardDisk(string filename, int blockSize){
-    //ifstream fin(filename, ios::binary);
     BlockListNode* b = new BlockListNode(blockSize);
     BlockListNode* dummyHead = b;
     ifstream fin(filename);
@@ -229,7 +229,6 @@ BlockListNode::BlockListNode(std::string blockContent) {
 
 int Record::endOfField2(std::string str) {
     int cnt = 3;
-    int result;
     for (int i = 0; i < str.size(); i++) {
         if (isspace(str[i])) {
             cnt -= 1;
@@ -245,9 +244,10 @@ int Record::endOfField2(std::string str) {
     if (cnt != 0) {
         throw invalid_argument("Input str is invalid, you need at least 3 spaces in the str.");
     }
+    return -1;
 }
 
-Record::Record(std::string inputText) {
+Record::Record(string inputText) {
     if (inputText.size() < 11) {
         throw invalid_argument("Input Text must be longer than 10 bytes, with 9 Bytes as Field1, separate by space");
     }
@@ -261,19 +261,30 @@ Record::Record(std::string inputText) {
 Record::Record() {}
 
 // read a file and get vector of sorted records
-std::vector<Record> readRawTxtFile(string fileName) {
+vector<Record> readRawTxtFile(string fileName) {
     string inputText;
     // Read from the text file
     ifstream MyReadFile(fileName);
-    int cnt = 0;
-//    int maxLine2Read = 30;
     vector<Record> records;
     while (getline(MyReadFile, inputText)) {
         // Output the text from the file
-        records.push_back(Record(inputText));
-//        Record &currentRecord = records.back();
-        cnt++;
+        Record r = Record(inputText);
+        records.push_back(r);
     }
     sort(records.begin(), records.end(), [](Record a, Record b) { return (a.field1 < b.field1); });
     return records;
+}
+
+// get the number of total blocks in a file from hard disk
+int getNumOfBlocksFromHardDiskFile(string filename, int blockSize){
+    ifstream fin(filename);
+    char buffer[blockSize];
+    int cnt = 0;
+    while(!fin.eof()){
+        fin.read((char *)& buffer, sizeof(buffer));
+        if (fin.peek()=='\n') break; // avoid read the last line twice
+        cnt ++;
+    }
+    fin.close();
+    return cnt;
 }

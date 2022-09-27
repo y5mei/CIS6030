@@ -4,6 +4,7 @@ project(Project)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SOURCE_FILES main.cpp)
+add_compile_options(-Wall)
 add_executable(Database_run ${SOURCE_FILES})
 #add_executable(Project main.cpp) # this is not for unit test
 

@@ -5,13 +5,13 @@
 #include <bitset>
 #include "DatabaseFileIO.h"
 #include "BPlusTree.h"
+#include "RawDataParse.h"
 
 using namespace std;
 
 int main() {
-//    sort the input file based on Field1
+
     vector<Record> records = readRawTxtFile();
-    sort(records.begin(), records.end(), [](Record a, Record b) { return (a.field1 < b.field1); });
 
     // let's load all the records into the block linked list:
     BlockListNode *b = new BlockListNode();

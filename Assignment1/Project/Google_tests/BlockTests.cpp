@@ -126,8 +126,11 @@ TEST(Database_lib, Save_A_Block_To_Disk_And_Read_Only_One_Block_Back_With_Offset
     curr = curr->insertRecordStringToBlock("345");
     curr = curr->insertRecordStringToBlock("def");
     curr = curr->insertRecordStringToBlock("789");
-
     BlockListNode::saveToDisk(&b, "testdatafile.txt");
+
+    int numOfSavedBlocks = getNumOfBlocksFromHardDiskFile("testdatafile.txt", 12);
+    ASSERT_EQ(numOfSavedBlocks, 3);
+
     BlockListNode* read1 = readBlockWithLSeek("testdatafile.txt", 1, 12);
     ASSERT_EQ(read1->getRecordAsString(1), "012");
     ASSERT_EQ(read1->getRecordAsString(2), "abc");

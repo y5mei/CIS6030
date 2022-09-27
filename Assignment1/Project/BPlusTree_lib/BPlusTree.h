@@ -35,11 +35,12 @@ public:
     Node *parent = nullptr;
     vector<Node *> children;
     vector<T> keys;
-    int number; // number of current inserted children
     int MAX_SIZE;
     bool isLeaf;
     vector<T> values; // only if isLeaf is true
     Node *next = nullptr; // only if isLeaf is true
+
+
     Node(int size = 8, bool isLeaf = false);
     Node* findRoot();
 

@@ -185,7 +185,6 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         }
 
         // separate all the keys and ptrs for N and M
-        Node *currChild = this->children.front();
         vector<Node *> parentNChild(children.begin(), children.begin() + ceil((MAX_SIZE + 2.0) / 2.0));
         vector<T> parentNKeys(keys.begin(), keys.begin() + ceil(MAX_SIZE / 2.0));
         vector<Node *> parentMChild(children.end() - floor((MAX_SIZE + 2.0) / 2.0), children.end());

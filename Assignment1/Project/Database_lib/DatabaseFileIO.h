@@ -3,9 +3,10 @@
 //
 #ifndef PROJECT_DATABASEFILEIO_H
 #define PROJECT_DATABASEFILEIO_H
+#include <vector>
+using namespace std;
 
 double f1();
-
 
 class BlockListNode {
 public:
@@ -60,6 +61,9 @@ BlockListNode* readFileFromHardDisk(std::string filename, int blockSize = 1024);
 
 BlockListNode* readBlockWithLSeek(std::string filename, int blockNum, int blockSize = 1024);
 
-std::vector<Record> readRawTxtFile(std::string fileName = "../A1_data.txt");
+int getNumOfBlocksFromHardDiskFile(std::string filename, int blockSize = 1024);
+
+// read a file and get vector of sorted records
+vector<Record> readRawTxtFile(string fileName = "../A1_data.txt");
 
 #endif //PROJECT_DATABASEFILEIO_H

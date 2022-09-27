@@ -2,4 +2,5 @@ cmake-build-debug
 ../.idea/
 .idea
 cmake-build*
-
+ ../../.DS_Store
+../.DS_Store

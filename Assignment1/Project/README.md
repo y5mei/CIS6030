@@ -38,3 +38,8 @@ Google Test framework is used for unit test purpose [Link](https://www.jetbrains
 
 ## Linux Command:
 1. To delete a folder: `rm -r folder/`
+2. To build on Sever:
+   * Make a build folder, `mkdir build` then `cd build/`
+   * `cmake ..`
+   * `make`
+   * `./Database_run`
