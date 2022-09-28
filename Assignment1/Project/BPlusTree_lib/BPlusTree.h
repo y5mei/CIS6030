@@ -32,13 +32,14 @@ Pair<T1, T2, T>::Pair(int myp1, int myp2) {
 template<class T>
 class Node {
 public:
-    Node *parent = nullptr;
-    vector<Node *> children;
-    vector<T> keys;
-    int MAX_SIZE;
+    short MAX_SIZE;
     bool isLeaf;
-    vector<T> values; // only if isLeaf is true
     Node *next = nullptr; // only if isLeaf is true
+    Node *parent = nullptr;
+    vector<T> keys; // m keys
+    vector<Node *> children; // m+1 children
+    vector<T> values; // or m values but only if isLeaf is true
+
 
 
     Node(int size = 8, bool isLeaf = false);
