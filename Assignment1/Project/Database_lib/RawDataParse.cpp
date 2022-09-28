@@ -13,6 +13,28 @@
 
 using namespace std;
 
+template<class T>
+map<Node<T>*, short> generateBTreeNodeDict(BPlusTree<T> *bPlusTree) {
+    // generate a dict key is pointer of node, value is a short
+    map<Node<T>*, short> bPlusTreeMap;
+    deque<Node<T>*> q;
+    q.push_back(bPlusTree->root);
+    short cnt = 1;
+
+    while(!q.empty()){
+        int size = q.size();
+        for (int i = 0; i < size; ++i) {
+            Node<T>* currNode = q.front();
+            q.pop_front();
+            bPlusTreeMap[currNode]= cnt++; // save each of the tree node and their index;
+            for(auto* child: currNode->children){
+                q.push_back(child);
+            }
+        }
+    }
+    return bPlusTreeMap;
+}
+
 // TODO: Also need to save the B+Tree in RAM;
 void readRawDataAndGenerateDataBaseFile(string fileName) {
     vector<Record> records = readRawTxtFile(fileName);
@@ -55,10 +77,28 @@ void readRawDataAndGenerateDataBaseFile(string fileName) {
         }
         b = b->next;
     }
+
+    string val = bTree.search("aaujxfrwk");
+    cout<<val<<endl;
+
+    auto r = bTree.root;
+    auto tail = r->searchNode("zzzjzagrk");
+
+    map<Node<string>*, short> mymap4 = generateBTreeNodeDict(&bTree);
+    cout<<mymap4.at(r)<<endl;
+    cout<<mymap4.at(tail)<<endl;
+
+
+
     //TODO: Write the B+Tree in HardDisk
     // Read a file from HardDisk and put it back as B+Tree;
     // In order to do this, I need to first creat a vector of Nodes, and then initialize them and and link them with pointer;
 }
+
+
+
+
+
 
 void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string content) {
     fstream fin;
@@ -111,3 +151,4 @@ void deleteFile(string fileName){
         perror("Error deleting the file");
     }
 }
+

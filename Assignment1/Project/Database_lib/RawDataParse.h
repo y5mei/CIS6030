@@ -6,6 +6,8 @@
 #define PROJECT_RAWDATAPARSE_H
 #include <vector>
 #include <string>
+#include <map>
+#include <deque>
 #include "DatabaseFileIO.h"
 #include "../BPlusTree_lib/BPlusTree.h"
 
@@ -23,6 +25,11 @@ public:
 
     // deserialization
 };
+
+// save a BTree into a disk file via level order transversal
+// TODO: How to return a pointer of a map from this function?
+template<class T>
+map<Node<T>*, short> generateBTreeNodeDict(BPlusTree<T>* bPlusTree);
 
 string readFileFromDiskByBlock(string fileName, int blockNum, int blockSize);
 void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string content);

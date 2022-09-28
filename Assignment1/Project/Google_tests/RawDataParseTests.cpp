@@ -4,7 +4,7 @@
 
 
 TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
-//    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
+    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
     EXPECT_EQ(1,1);
 }
 
@@ -20,7 +20,11 @@ TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {
     writefileToDiskByBlock(fileName, 1, 12, "123456789012");
 
     // Write method can leave a hole in the file, and write discontinued block
-    writefileToDiskByBlock(fileName, 4, 12, "mayson a pig");
+    char mychar[12];
+    for(int i = 0; i<12; ++i){
+        mychar[i] = '0'+i;
+    }
+    writefileToDiskByBlock(fileName, 4, 12, mychar);
 
     string block1 = readFileFromDiskByBlock(fileName, 1, 12);
     ASSERT_EQ(block1, "123456789012");
@@ -30,5 +34,5 @@ TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {
     string block3 = readFileFromDiskByBlock(fileName, 3, 12);
     ASSERT_EQ(block3, "");
     string block4 = readFileFromDiskByBlock(fileName, 4, 12);
-    ASSERT_EQ(block4, "mayson a pig");
+    ASSERT_EQ(block4, "0123456789:;");
 }
