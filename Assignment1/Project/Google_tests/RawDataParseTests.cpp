@@ -4,7 +4,7 @@
 #include <bitset>
 
 
-TEST(RawDataParseTest, Short_Char__String_RoundTrip){
+TEST(RawDataParseTest, Short_Char__String_RoundTrip) {
     // Round trip test to cast short to two bytes, and cast two shorts into a string of four bytes.
     // Estimation num of Tree node: 15K, Block: 3K, record less than 100;
     // Didn't test, but this should not work with negative short numbers
@@ -28,7 +28,60 @@ TEST(RawDataParseTest, Short_Char__String_RoundTrip){
 
 TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
     readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
-    EXPECT_EQ(1,1);
+    EXPECT_EQ(1, 1);
+}
+//"database_file.txt"
+//"bTree_file.txt"
+
+TEST(RawDataParseTest, Search_Directly_From_Disk) {
+    string searchKey = "aaagbmhha";
+
+    Node<string> curr = Node<string>();
+    int size = getNumOfBlocksFromHardDiskFile("bTree_file.txt", 512);
+    ASSERT_EQ(size, 11720);
+
+    vector<Node<string> *> BTreeVector;
+    BTreeVector.push_back(nullptr); // 0 index is nullptr;
+    while (size > 0) {
+        BTreeVector.push_back(new Node<string>());
+        size--;
+    }
+//    BTreeVector.size()
+    for (int i = 1; i < BTreeVector.size(); ++i) {
+        auto* node = BTreeVector[i];
+        string str = readFileFromDiskByBlock("bTree_file.txt", i, 512);
+//        bitset<8> x1(str[3]);
+//        bitset<8> x2(str[4]);
+//        bitset<8> x3(str[7]);
+//        bitset<8> x4(str[8]);
+//        cout<<x1<<endl;
+//        cout<<x2<<endl;
+//        cout<<x3<<endl;
+//        cout<<x4<<endl;
+        deseralizeNodeFromStr(str, &BTreeVector, i);
+    }
+
+        auto* root = BTreeVector.at(1);
+    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
+    bPlusTree.root = root;
+    string findResult = bPlusTree.search("aaagbmhha");
+    StingShort stingShort = StingShort(findResult);
+    cout<<stingShort.block<<endl;
+    cout<<stingShort.record<<endl;
+
+    string findResult2 = bPlusTree.search("zzzjzagrk");
+    StingShort stingShort2 = StingShort(findResult2);
+    cout<<stingShort2.block<<endl;
+    cout<<stingShort2.record<<endl;
+    string blockContent = readFileFromDiskByBlock("database_file.txt", stingShort2.block, 1024);
+    BlockListNode bl = BlockListNode();
+    for(int i = 0; i<1024; i++){
+        bl.block[i] = blockContent[i];
+    }
+
+    cout<<bl.getRecordAsString(stingShort2.record)<<endl;
+
+//    EXPECT_EQ(BTreeVector.size(), 11721);
 }
 
 TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {
@@ -44,8 +97,8 @@ TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {
 
     // Write method can leave a hole in the file, and write discontinued block
     char mychar[12];
-    for(int i = 0; i<12; ++i){
-        mychar[i] = '0'+i;
+    for (int i = 0; i < 12; ++i) {
+        mychar[i] = '0' + i;
     }
     writefileToDiskByBlock(fileName, 4, 12, mychar);
 
@@ -55,7 +108,8 @@ TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {
     ASSERT_EQ(block2, "mnopqrstuvwx");
     // Block 3 is the hole [check ../cmake-build-debug/Google_tests/testdatafilexyz.txt to see the generated file]
     string block3 = readFileFromDiskByBlock(fileName, 3, 12);
-    ASSERT_EQ(block3, "");
+    ASSERT_EQ(block3[0], '\0');
+    ASSERT_EQ(block3[11], '\0');
     string block4 = readFileFromDiskByBlock(fileName, 4, 12);
     ASSERT_EQ(block4, "0123456789:;");
 }

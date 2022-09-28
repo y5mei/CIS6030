@@ -78,6 +78,10 @@ void saveBTreeNodesOnDisk(BPlusTree<T>* bPlusTree, string filename);
 template<class T>
 string serializationOfNode(Node<T>* node, map<Node<T>*, short>* map);
 
+void deseralizeNodeFromStr(string str, vector<Node<string>*>* vec, int idx);
+
+void lalala(string str, vector<Node<string>*>* vec);
+
 // Generate a dict of short for each B+Tree nodes
 // TODO: How to return a pointer of a map from this function?
 template<class T>
