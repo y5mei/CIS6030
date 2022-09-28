@@ -8,26 +8,26 @@ TEST(RawDataParseTest, Short_Char__String_RoundTrip){
     // Round trip test to cast short to two bytes, and cast two shorts into a string of four bytes.
     // Estimation num of Tree node: 15K, Block: 3K, record less than 100;
     // Didn't test, but this should not work with negative short numbers
-    for (short i = 0; i < 20000; ++i) {
-        CharShort a = CharShort(i);
-        CharShort b = CharShort(a.high, a.low);
-        CharShort c = CharShort(b.num);
-        ASSERT_EQ(a.high, c.high);
-        ASSERT_EQ(a.low, c.low);
-    }
-
-    for (short i = 0; i < 4000; ++i) { // block num around 3300
-        for (short j = 0; j < 100; ++j) { // record num around 25
-            StingShort a = StingShort(i, j);
-            StingShort b = StingShort(a.str);
-            StingShort c = StingShort(b.block, b.record);
-            ASSERT_EQ(a.str, c.str);
-        }
-    }
+//    for (short i = 0; i < 20000; ++i) {
+//        CharShort a = CharShort(i);
+//        CharShort b = CharShort(a.high, a.low);
+//        CharShort c = CharShort(b.num);
+//        ASSERT_EQ(a.high, c.high);
+//        ASSERT_EQ(a.low, c.low);
+//    }
+//
+//    for (short i = 0; i < 4000; ++i) { // block num around 3300
+//        for (short j = 0; j < 100; ++j) { // record num around 25
+//            StingShort a = StingShort(i, j);
+//            StingShort b = StingShort(a.str);
+//            StingShort c = StingShort(b.block, b.record);
+//            ASSERT_EQ(a.str, c.str);
+//        }
+//    }
 }
 
 TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
-//    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
+    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
     EXPECT_EQ(1,1);
 }
 
