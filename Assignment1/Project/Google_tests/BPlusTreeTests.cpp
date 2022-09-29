@@ -3,6 +3,7 @@
 #include "BPlusTree.h"
 #include <string>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -319,4 +320,21 @@ TEST(BPlusTreeTest, BTree_Values_Can_Be_Searched) {
     }
 
 
+}
+
+TEST(BPlusTreeTest, Insert_A_Lot_Of_Value){
+    BPlusTree<int> b = BPlusTree<int>(3);
+    int SIZE = 40000; // there are about 40K records in this assignment;
+    int a[SIZE];
+    for (int i = 0; i < SIZE; ++i) {
+        a[i] = i;
+    }
+    random_shuffle(&a[0],&a[SIZE-1]); // shuffle the insert seq.
+
+    for (int i = 0; i < SIZE; ++i) {
+        b.insert(a[i]); // insert into B+Tree
+    }
+    for (int j = 0; j < SIZE; ++j) {
+        EXPECT_THAT(b.search(j), j); // make sure they are there;
+    }
 }

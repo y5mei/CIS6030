@@ -14,7 +14,7 @@
 
 using namespace std;
 
-
+// convert a char to two short
 struct CharShort {
     char high;
     char low;
@@ -35,6 +35,7 @@ struct CharShort {
     }
 };
 
+// covert 4 chars to 4 shorts
 struct StingShort {
     short block;
     short record;
@@ -61,6 +62,9 @@ struct StingShort {
 
 void readRawDataAndGenerateDataBaseFile(string fileName = "../A1_data.txt");
 
+// search a key from a BTree, and return and print the result;
+string search(string key, string databaseFileName ="bTree_file.txt", string btreeFileName="bTree_file.txt");
+
 class BTreeNodeBlock{
 public:
     vector<char> content; // the max block size of BTree is 512;
@@ -79,8 +83,6 @@ template<class T>
 string serializationOfNode(Node<T>* node, map<Node<T>*, short>* map);
 
 void deseralizeNodeFromStr(string str, vector<Node<string>*>* vec, int idx);
-
-void lalala(string str, vector<Node<string>*>* vec);
 
 // Generate a dict of short for each B+Tree nodes
 // TODO: How to return a pointer of a map from this function?

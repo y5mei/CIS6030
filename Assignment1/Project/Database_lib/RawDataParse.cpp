@@ -117,23 +117,23 @@ string serializationOfNode(Node<T> *node, map<Node<T> *, short> *map) {
     return s;
 }
 
-void deseralizeNodeFromStr(string str, vector<Node<string>*>* vec, int nodeNum) {
-    Node<string>* node = vec->at(nodeNum);
+void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum) {
+    Node<string> *node = vec->at(nodeNum);
     short leaf = str[0];
     node->isLeaf = leaf;
 //    cout << "IsLeaf?: " << node->isLeaf << endl;
-//
+
     short m = CharShort(str[1], str[2]).num;
     node->MAX_SIZE = m;
 //    cout<<"Max_Size is: "<<node->MAX_SIZE<<endl;
-//
+
     short next = CharShort(str[3], str[4]).num;
     node->next = vec->at(next);
 //
     short parent = CharShort(str[5], str[6]).num;
     node->parent = vec->at(parent);
 //    cout<<"parent is  "<<parent<<endl;
-//
+
     short numOfKeys = CharShort(str[7], str[8]).num;
 //    cout<<"num of keys are  "<<numOfKeys<<endl;
 
@@ -157,17 +157,15 @@ void deseralizeNodeFromStr(string str, vector<Node<string>*>* vec, int nodeNum) 
     }
 
     short numOfvalues = CharShort(str[idx++], str[idx++]).num;
+
 //    cout << "num of values are  " << numOfvalues << endl;
     for (int i = 0; i < numOfvalues; ++i) {
         string valStr = {str[idx++], str[idx++], str[idx++], str[idx++]};
-//        short blockValue = StingShort(valStr).block;
-//        short recordValue = StingShort(valStr).record;
-//        cout << "BlockNum is: " << blockValue << endl;
-//        cout << "RecordNum is" << recordValue << endl;
         node->values.push_back(valStr);
     }
 }
 
+// assignment q1 part 1
 void readRawDataAndGenerateDataBaseFile(string fileName) {
     vector<Record> records = readRawTxtFile(fileName);
 
@@ -186,6 +184,8 @@ void readRawDataAndGenerateDataBaseFile(string fileName) {
     cout << "The 4th record in block 4 is: " << dummyHead->next->next->next->getRecordAsString(4) << endl; //aaujxfrwk
     cout << "Block 4has totally # of records: " << dummyHead->next->next->next->getNumOfRecord() << endl;
     cout << "The last record is: " << b->getRecordAsString(b->getNumOfRecord()) << endl; //zzzjzagrk
+    cout << "The record before the last last record is: " << b->getRecordAsString(b->getNumOfRecord() - 1)
+         << endl; //zzzjzagrk
     cout << records.size() << endl; //46883
     //1) Build a database file and save to disk; block size 1024;
     BlockListNode::saveToDisk(dummyHead, "database_file.txt");
@@ -212,6 +212,7 @@ void readRawDataAndGenerateDataBaseFile(string fileName) {
         }
         b = b->next;
     }
+//    cout<<nn->keys[0]<<endl;
 
     // save the B+Tree into Disk
     saveBTreeNodesOnDisk(&bTree, "bTree_file.txt");
@@ -243,6 +244,7 @@ void readRawDataAndGenerateDataBaseFile(string fileName) {
 void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string content) {
     fstream fin;
     fin.open(fileName);
+    // if file does not exist, create a new one; if it is already exist, append new blocks into it;
     if (!fin.is_open()) {
         fin.open(fileName, fstream::in | fstream::out | fstream::app);
     }
@@ -267,7 +269,7 @@ string readFileFromDiskByBlock(string filename, int blockNum, int blockSize) {
     long shift;
     if (blockNum == 1) {
         shift = 0L;
-    }else{
+    } else {
         shift = (blockNum - 1) * blockSize;
     }
     fin.seekg(shift, ios::beg);
@@ -300,9 +302,95 @@ void deleteFile(string fileName) {
     }
 }
 
-void lalala(string str, vector<Node<string>*>* vec) {
-    cout<<"lalalla"<<endl;
+int getLaipiNodeNumFormVec(Node<string> *node, vector<Node<string>*> *vec){
+    for (int i = 0; i < vec->size(); ++i) {
+        if (vec->at(i)==node){
+            return i;
+        }
+    }
 }
 
+// assignment q1 part 2-1
+string search(string key, string databaseFileName, string btreeFileName) {
+    // search a key
+    // 1. validate if the key is length of 9
+    // 2. read the B+Tree in RAM, build the tree, and search for the block num and value num
+    // 3. New a new BTree instance, set up the size m = 8, and repalce the root to the 1st element in the vector (0 is nullptr)
+    // 4. print the result
+
+    if (key.size() != 9) {
+        string error;
+        error.append("the search key must has length of 9, but you are given key with length ");
+        error.append(to_string(key.size()));
+        throw invalid_argument(error);
+    }
+
+    // build a vector of treenode
+    Node<string> curr = Node<string>();
+    int size = getNumOfBlocksFromHardDiskFile(btreeFileName, 512);
+    //Construct the Entire B+Tree
+    vector<Node<string> *> BTreeVector;
+    BTreeVector.push_back(nullptr); // 0 index is nullptr;
+    while (size > 0) {
+        BTreeVector.push_back(new Node<string>());
+        size--;
+    }
+    for (int i = 1; i < BTreeVector.size(); ++i) {
+        auto *node = BTreeVector[i];
+        string str = readFileFromDiskByBlock(btreeFileName, i, 512);
+        deseralizeNodeFromStr(str, &BTreeVector, i);
+    }
+    // New a BTree Instance, repalce the root node
+    auto *root = BTreeVector.at(1);
+    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
+    bPlusTree.root = root;
+
+    // Search the key and cout the result
+    string bTreeValue = bPlusTree.search(key);
+    //todo: what if search failed?
+    StingShort value = StingShort(bTreeValue);
+//    cout << value.block << endl;
+//    cout << value.record << endl;
+
+    string blockContent = readFileFromDiskByBlock("database_file.txt", value.block, 1024);
+    BlockListNode bl = BlockListNode(blockContent);
+    Record r = Record(bl.getRecordAsString(value.record));
+//    cout << r << endl;
+    return r.field1;
+
+
+
+//        bitset<8> x1(str[3]);
+//        bitset<8> x2(str[4]);
+//        bitset<8> x3(str[7]);
+//        bitset<8> x4(str[8]);
+//        cout<<x1<<endl;
+//        cout<<x2<<endl;
+//        cout<<x3<<endl;
+//        cout<<x4<<endl;
+}
+
+// assignment q1 part 2-2
+void insert(string str, string databaseFileName, string btreeFileName){
+    // build a vector of treenode
+    Node<string> curr = Node<string>();
+    int size = getNumOfBlocksFromHardDiskFile(databaseFileName, 512);
+    //Construct the Entire B+Tree
+    vector<Node<string> *> BTreeVector;
+    BTreeVector.push_back(nullptr); // 0 index is nullptr;
+    while (size > 0) {
+        BTreeVector.push_back(new Node<string>());
+        size--;
+    }
+    for (int i = 1; i < BTreeVector.size(); ++i) {
+        auto *node = BTreeVector[i];
+        string str = readFileFromDiskByBlock(btreeFileName, i, 512);
+        deseralizeNodeFromStr(str, &BTreeVector, i);
+    }
+    // New a BTree Instance, repalce the root node
+    auto *root = BTreeVector.at(1);
+    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
+    bPlusTree.root = root;
+}
 
 

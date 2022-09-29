@@ -149,12 +149,10 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         // if an interior node's children is leaf node, then the key is the leaf node's first key
         for (int i = 0; i < this->keys.size(); ++i) {
             Node *c = this->children[i + 1];
-            if (c->isLeaf) {
-                this->keys[i] = c->keys[0];
-            } else {
-                Node *grandC = c->children[0];
-                this->keys[i] = grandC->keys[0];
+            while(!c->isLeaf){
+                c = c->children[0];
             }
+            this->keys[i] = c->keys[0];
         }
 
         // update parent
@@ -176,12 +174,10 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         // sort all the keys
         for (int i = 0; i < this->keys.size(); ++i) {
             Node *c = this->children[i + 1];
-            if (c->isLeaf) {
-                this->keys[i] = c->keys[0];
-            } else {
-                Node *grandC = c->children[0];
-                this->keys[i] = grandC->keys[0];
+            while(!c->isLeaf){
+                c = c->children[0];
             }
+            this->keys[i] = c->keys[0];
         }
 
         // separate all the keys and ptrs for N and M
@@ -214,6 +210,9 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
             grantParent->children.push_back(parentN);
             grantParent->children.push_back(parentM);
             Node *gc = parentM->children[0];
+            while(!gc->isLeaf){
+                gc = gc->children[0];
+            }
             grantParent->keys.push_back(gc->keys[0]);
 
             parentN->parent = grantParent;
@@ -233,4 +232,5 @@ Node<T> *Node<T>::findRoot() {
     }
     return curr;
 }
+
 

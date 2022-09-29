@@ -27,61 +27,20 @@ TEST(RawDataParseTest, Short_Char__String_RoundTrip) {
 }
 
 TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
-    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
-    EXPECT_EQ(1, 1);
+//    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
+//    EXPECT_EQ(1, 1);
 }
-//"database_file.txt"
-//"bTree_file.txt"
 
 TEST(RawDataParseTest, Search_Directly_From_Disk) {
-    string searchKey = "aaagbmhha";
-
-    Node<string> curr = Node<string>();
-    int size = getNumOfBlocksFromHardDiskFile("bTree_file.txt", 512);
-    ASSERT_EQ(size, 11720);
-
-    vector<Node<string> *> BTreeVector;
-    BTreeVector.push_back(nullptr); // 0 index is nullptr;
-    while (size > 0) {
-        BTreeVector.push_back(new Node<string>());
-        size--;
-    }
-//    BTreeVector.size()
-    for (int i = 1; i < BTreeVector.size(); ++i) {
-        auto* node = BTreeVector[i];
-        string str = readFileFromDiskByBlock("bTree_file.txt", i, 512);
-//        bitset<8> x1(str[3]);
-//        bitset<8> x2(str[4]);
-//        bitset<8> x3(str[7]);
-//        bitset<8> x4(str[8]);
-//        cout<<x1<<endl;
-//        cout<<x2<<endl;
-//        cout<<x3<<endl;
-//        cout<<x4<<endl;
-        deseralizeNodeFromStr(str, &BTreeVector, i);
-    }
-
-        auto* root = BTreeVector.at(1);
-    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
-    bPlusTree.root = root;
-    string findResult = bPlusTree.search("aaagbmhha");
-    StingShort stingShort = StingShort(findResult);
-    cout<<stingShort.block<<endl;
-    cout<<stingShort.record<<endl;
-
-    string findResult2 = bPlusTree.search("zzzjzagrk");
-    StingShort stingShort2 = StingShort(findResult2);
-    cout<<stingShort2.block<<endl;
-    cout<<stingShort2.record<<endl;
-    string blockContent = readFileFromDiskByBlock("database_file.txt", stingShort2.block, 1024);
-    BlockListNode bl = BlockListNode();
-    for(int i = 0; i<1024; i++){
-        bl.block[i] = blockContent[i];
-    }
-
-    cout<<bl.getRecordAsString(stingShort2.record)<<endl;
-
-//    EXPECT_EQ(BTreeVector.size(), 11721);
+//    vector<Record> records = readRawTxtFile("../../A1_data.txt");
+//    int n = 20;
+//    while(n>0){
+//        int random = rand()%records.size();
+//        cout<<random<<endl;
+//        Record r = records[random];
+//        ASSERT_EQ(r.field1, search(r.field1));
+//        n--;
+//    }
 }
 
 TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {

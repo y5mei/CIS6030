@@ -43,7 +43,8 @@ public:
 
 
     Node(int size = 8, bool isLeaf = false);
-    Node* findRoot();
+
+    Node *findRoot();
 
     T search(T k);
 
@@ -76,12 +77,15 @@ private:
 template<class T>
 class BPlusTree {
 public:
-    Node<T>* root;
-    void insert(T key, T val);
-    void insert(T keyValue);
-    BPlusTree(int size);
-    T search(T key);
+    Node<T> *root;
 
+    void insert(T key, T val);
+
+    void insert(T keyValue);
+
+    BPlusTree(int size);
+
+    T search(T key);
 };
 
 template<class T>
@@ -109,6 +113,11 @@ T BPlusTree<T>::search(T key) {
     return root->search(key);
 }
 
+// this is a debug method, input a root node, and return the path how to find the key from the root
+Node<string> *searchNodeWithDebugPrint(string k, Node<string> *node, vector<Node<string>*> *vec);
+
+void printNodeForDebug(int nodeNum, vector<Node<string>*> *vec);
+void levelOrderPrintBTreeForDebug(Node<int>* root);
 #include "BPlusTree.tpp"
 
 #endif //PROJECT_BPLUSTREE_H

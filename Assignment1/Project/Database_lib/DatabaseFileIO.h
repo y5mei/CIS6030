@@ -49,6 +49,16 @@ public:
 
     Record(std::string str);
     Record();
+    friend ostream &operator<<(ostream &os, Record const &record) {
+        string s = "";
+        s.append("Field 1: ");
+        s.append(record.field1+'\n');
+        s.append("Field 2: ");
+        s.append(record.field2+'\n');
+        s.append("Field 3: ");
+        s.append(record.field3+'\n');
+        return os << s;
+    }
 private:
     short idxField2End;
     // returns the end idx of the second field (the space),
