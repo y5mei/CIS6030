@@ -32,15 +32,19 @@ TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
 }
 
 TEST(RawDataParseTest, Search_Directly_From_Disk) {
-//    vector<Record> records = readRawTxtFile("../../A1_data.txt");
-//    int n = 20;
-//    while(n>0){
-//        int random = rand()%records.size();
-//        cout<<random<<endl;
-//        Record r = records[random];
-//        ASSERT_EQ(r.field1, search(r.field1));
-//        n--;
-//    }
+// A random key that exist
+    vector<Record> records = readRawTxtFile("../../A1_data.txt");
+    int n = 1;
+    while (n > 0) {
+        srand((unsigned int) time(NULL));
+        int random = rand() % records.size();
+        cout << random << endl;
+        Record r = records[random];
+        ASSERT_EQ(r.field1, search(r.field1));
+        n--;
+    }
+    // key does not exist
+    search("123456789");
 }
 
 TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {

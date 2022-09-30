@@ -302,9 +302,9 @@ void deleteFile(string fileName) {
     }
 }
 
-int getLaipiNodeNumFormVec(Node<string> *node, vector<Node<string>*> *vec){
+int getLaipiNodeNumFormVec(Node<string> *node, vector<Node<string> *> *vec) {
     for (int i = 0; i < vec->size(); ++i) {
-        if (vec->at(i)==node){
+        if (vec->at(i) == node) {
             return i;
         }
     }
@@ -312,6 +312,54 @@ int getLaipiNodeNumFormVec(Node<string> *node, vector<Node<string>*> *vec){
 
 // assignment q1 part 2-1
 string search(string key, string databaseFileName, string btreeFileName) {
+    if (key.size() != 9) {
+        string error;
+        error.append("the search key must has length of 9, but you are given key with length ");
+        error.append(to_string(key.size()));
+        throw invalid_argument(error);
+    }
+
+    int diskReadCnt = 1;
+
+    HardDiskNode* h = new HardDiskNode();
+    string str = readFileFromDiskByBlock(btreeFileName, 1, 512);
+    h->deseralizeHardDiskNodeFromStr(str);
+
+    while (!h->isLeaf) {
+        short blockNum = h->searchNodeAtNonLeafNode(key);
+        str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
+        diskReadCnt ++;
+        h->deseralizeHardDiskNodeFromStr(str);
+    }
+    str = h->searchValueOnLeafNode(key);
+    if (str == "-1") {
+        cout<<"After "<<diskReadCnt<<" times disk read, we found that: "<<endl;
+        cout << "The input key: " << key << " does not exist in the BTree" << endl;
+        return "-1";
+    } else {
+        StingShort value = StingShort(str);
+//        cout << value.block << endl;
+//        cout << value.record << endl;
+        string blockContent = readFileFromDiskByBlock("database_file.txt", value.block, 1024);
+        BlockListNode bl = BlockListNode(blockContent);
+        Record r = Record(bl.getRecordAsString(value.record));
+        cout<<">> Reading a data block to RAM with keys: ";
+        int numRecords = bl.getNumOfRecord();
+        for (int i = 1; i <= numRecords; ++i) {
+            string s = bl.getRecordAsString(i);
+            Record r = Record(s);
+            cout<< r.field1<<" ";
+        }
+        cout<<"."<<endl;
+        cout<<"After "<<diskReadCnt + 1 <<" times disk read ("<<diskReadCnt << " times TreeNode read + 1 Data Block read), we found the key: "<< key<<": "<<endl;
+        cout<<r<<endl;
+        return r.field1;
+    }
+
+}
+
+// assignment q1 part 2-2
+void insert(string key, string databaseFileName, string btreeFileName) {
     // search a key
     // 1. validate if the key is length of 9
     // 2. read the B+Tree in RAM, build the tree, and search for the block num and value num
@@ -355,42 +403,24 @@ string search(string key, string databaseFileName, string btreeFileName) {
     string blockContent = readFileFromDiskByBlock("database_file.txt", value.block, 1024);
     BlockListNode bl = BlockListNode(blockContent);
     Record r = Record(bl.getRecordAsString(value.record));
-//    cout << r << endl;
-    return r.field1;
 
-
-
-//        bitset<8> x1(str[3]);
-//        bitset<8> x2(str[4]);
-//        bitset<8> x3(str[7]);
-//        bitset<8> x4(str[8]);
-//        cout<<x1<<endl;
-//        cout<<x2<<endl;
-//        cout<<x3<<endl;
-//        cout<<x4<<endl;
 }
 
-// assignment q1 part 2-2
-void insert(string str, string databaseFileName, string btreeFileName){
-    // build a vector of treenode
-    Node<string> curr = Node<string>();
-    int size = getNumOfBlocksFromHardDiskFile(databaseFileName, 512);
-    //Construct the Entire B+Tree
-    vector<Node<string> *> BTreeVector;
-    BTreeVector.push_back(nullptr); // 0 index is nullptr;
-    while (size > 0) {
-        BTreeVector.push_back(new Node<string>());
-        size--;
-    }
-    for (int i = 1; i < BTreeVector.size(); ++i) {
-        auto *node = BTreeVector[i];
-        string str = readFileFromDiskByBlock(btreeFileName, i, 512);
-        deseralizeNodeFromStr(str, &BTreeVector, i);
-    }
-    // New a BTree Instance, repalce the root node
-    auto *root = BTreeVector.at(1);
-    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
-    bPlusTree.root = root;
+
+// printout a short as bits;
+void coutShortToBits(short num){
+    bitset<16> x(num);
+    cout<<"The bits for "<<num<<" is: "<<endl;
+    cout<<x<<endl;
 }
 
+// printout a string of chars as bits;
+void coutStringToBits(string str){
+    cout<<"Convert str to bits:"<<str<<endl;
+    for(char c: str){
+        bitset<8> x(c);
+        cout<<x <<" ";
+    }
+    cout<<"."<<endl;
+}
 

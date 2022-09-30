@@ -14,52 +14,6 @@
 
 using namespace std;
 
-// convert a char to two short
-struct CharShort {
-    char high;
-    char low;
-    short num;
-
-    CharShort(short j) {
-        num = j;
-        low = j;
-        j = j >> 8;
-        high = j;
-    };
-
-    CharShort(char h, char l) {
-        high = h;
-        low = l;
-        num = h << 8;
-        num = num | (unsigned char) l; // make sure the high 8 bits of l is 0 nor 1
-    }
-};
-
-// covert 4 chars to 4 shorts
-struct StingShort {
-    short block;
-    short record;
-    string str;
-
-    StingShort(string s) {
-        str = s;
-        // block
-        CharShort cs1 = CharShort(s[0], s[1]);
-        block = cs1.num;
-        // record
-        CharShort cs2 = CharShort(s[2], s[3]);
-        record = cs2.num;
-    };
-
-    StingShort(short blockNum, short recordNum) {
-        block = blockNum;
-        record = recordNum;
-        CharShort b = CharShort(blockNum);
-        CharShort r = CharShort(recordNum);
-        str = {b.high, b.low, r.high, r.low};
-    }
-};
-
 void readRawDataAndGenerateDataBaseFile(string fileName = "../A1_data.txt");
 
 // search a key from a BTree, and return and print the result;
@@ -92,5 +46,6 @@ map<Node<T>*, short> generateBTreeNodeDict(BPlusTree<T>* bPlusTree);
 string readFileFromDiskByBlock(string fileName, int blockNum, int blockSize);
 void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string content);
 void deleteFile(string fileName);
-
+void coutShortToBits(short num);
+void coutStringToBits(string str);
 #endif //PROJECT_RAWDATAPARSE_H

@@ -76,4 +76,8 @@ int getNumOfBlocksFromHardDiskFile(std::string filename, int blockSize = 1024);
 // read a file and get vector of sorted records
 vector<Record> readRawTxtFile(string fileName = "../A1_data.txt");
 
+
+//class Block{
+//    short prev =
+//};
 #endif //PROJECT_DATABASEFILEIO_H
