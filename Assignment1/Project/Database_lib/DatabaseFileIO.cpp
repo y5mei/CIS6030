@@ -22,27 +22,26 @@ double f1() {
 }
 
 BlockListNode *readBlockWithLSeek(std::string filename, int blockNum, int blockSize) {
-    BlockListNode* b = new BlockListNode(blockSize);
+    BlockListNode *b = new BlockListNode(blockSize);
     ifstream fin;
     fin.open(filename);
 
-    long shift = (blockNum-1)*blockSize;
-    if(blockNum==1){
+    long shift = (blockNum - 1) * blockSize;
+    if (blockNum == 1) {
         shift = 0L;
     }
     fin.seekg(shift, ios::beg);
 
     char buffer[blockSize];
-    if(fin.good()){
-        fin.read((char *)& buffer, sizeof(buffer));
-        for(int i=0;i<blockSize;i++){
+    if (fin.good()) {
+        fin.read((char *) &buffer, sizeof(buffer));
+        for (int i = 0; i < blockSize; i++) {
             b->block[i] = buffer[i];
         }
     }
     fin.close();
     return b;
 }
-
 
 
 /**
@@ -179,16 +178,16 @@ string BlockListNode::getRecordAsString(short n) {
 }
 
 // write all the blocks from head to the tail to a database file;
-void BlockListNode::saveToDisk(BlockListNode* head, std::string filename) {
+void BlockListNode::saveToDisk(BlockListNode *head, std::string filename) {
     ofstream FileToWrite(filename, ofstream::trunc); // erase the content before write
     char content[head->ACTUAL_SIZE];
-    BlockListNode* dummy = head;
-    while (dummy != nullptr){
+    BlockListNode *dummy = head;
+    while (dummy != nullptr) {
         // get only the subslice of the actual size
-        for(int i = 0; i < sizeof(content); ++i){
+        for (int i = 0; i < sizeof(content); ++i) {
             content[i] = dummy->block[i];
         }
-        FileToWrite.write( (char *) content, sizeof(content));
+        FileToWrite.write((char *) content, sizeof(content));
         dummy = dummy->next;
     }
     // Close the file
@@ -198,17 +197,17 @@ void BlockListNode::saveToDisk(BlockListNode* head, std::string filename) {
 // read a file via filename, and create a linked list of blocks
 // return the head of the linked list
 // TODO: Need to know when to delete the new nodes
-BlockListNode* readFileFromHardDisk(string filename, int blockSize){
-    BlockListNode* b = new BlockListNode(blockSize);
-    BlockListNode* dummyHead = b;
+BlockListNode *readFileFromHardDisk(string filename, int blockSize) {
+    BlockListNode *b = new BlockListNode(blockSize);
+    BlockListNode *dummyHead = b;
     ifstream fin(filename);
     char buffer[blockSize];
-    while(!fin.eof()){
-        fin.read((char *)& buffer, sizeof(buffer));
-        for(int i=0;i<blockSize;i++){
+    while (!fin.eof()) {
+        fin.read((char *) &buffer, sizeof(buffer));
+        for (int i = 0; i < blockSize; i++) {
             b->block[i] = buffer[i];
         }
-        if (fin.peek()=='\n') break; // avoid read the last line twice
+        if (fin.peek() == '\n') break; // avoid read the last line twice
         b->next = new BlockListNode(blockSize);
         b = b->next;
     }
@@ -218,12 +217,23 @@ BlockListNode* readFileFromHardDisk(string filename, int blockSize){
 
 BlockListNode::BlockListNode(std::string blockContent) {
     ACTUAL_SIZE = blockContent.size();
-    if (ACTUAL_SIZE > 1024){
+    if (ACTUAL_SIZE > 1024) {
         throw invalid_argument("Block size cannot be larger than 1024");
     }
-    for(int i = 0; i<MAX_SIZE; ++i){
+    for (int i = 0; i < MAX_SIZE; ++i) {
         block[i] = blockContent[i];
     }
+}
+
+void BlockListNode::setBlock(string s) {
+    if (s.size() != ACTUAL_SIZE) {
+        throw invalid_argument("Input string size is not matching than the size of the current block");
+    } else {
+        for (int i = 0; i < ACTUAL_SIZE; ++i) {
+            block[i] = s[i];
+        }
+    }
+
 }
 
 
@@ -236,11 +246,11 @@ int Record::endOfField2(std::string str) {
                 throw invalid_argument("The length of first field must be 9 bytes!");
             }
             if (cnt == 0) {
-                return i-1;
+                return i - 1;
             }
         }
     }
-    if (cnt == 1) return str.size()-1;
+    if (cnt == 1) return str.size() - 1;
     if (cnt != 0) {
         throw invalid_argument("Input str is invalid, you need at least 3 spaces in the str.");
     }
@@ -258,6 +268,7 @@ Record::Record(string inputText) {
     field3 = inputText.substr(min(idxField2End + 2, length));
     content = inputText;
 }
+
 Record::Record() {}
 
 // read a file and get vector of sorted records
@@ -276,14 +287,14 @@ vector<Record> readRawTxtFile(string fileName) {
 }
 
 // get the number of total blocks in a file from hard disk
-int getNumOfBlocksFromHardDiskFile(string filename, int blockSize){
+int getNumOfBlocksFromHardDiskFile(string filename, int blockSize) {
     ifstream fin(filename);
     char buffer[blockSize];
     int cnt = 0;
-    while(!fin.eof()){
-        fin.read((char *)& buffer, sizeof(buffer));
-        if (fin.peek()=='\n') break; // avoid read the last line twice
-        cnt ++;
+    while (!fin.eof()) {
+        fin.read((char *) &buffer, sizeof(buffer));
+        if (fin.peek() == '\n') break; // avoid read the last line twice
+        cnt++;
     }
     fin.close();
     return cnt;

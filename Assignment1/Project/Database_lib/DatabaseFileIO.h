@@ -24,6 +24,8 @@ public:
     // also need to find out the num of emptybytes (how about the second bytes?)
     BlockListNode(std::string blockContent);
 
+    void setBlock(string s);
+
     short getJumpOfRecord(short n);
     void setJumpOfRecord(short n, short j);
 

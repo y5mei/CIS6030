@@ -75,7 +75,7 @@ Pair<T1, T2, T>::Pair(int myp1, int myp2) {
     this->p2 = myp2;
 }
 
-class HardDiskNode{
+class HardDiskNode {
 public:
     short MAX_SIZE;
     bool isLeaf;
@@ -88,7 +88,9 @@ public:
 
     // return which children need to search based on the keys, and k value
     short searchNodeAtNonLeafNode(string k);
+
     string searchValueOnLeafNode(string k);
+
     void deseralizeHardDiskNodeFromStr(string str);
 };
 
@@ -149,6 +151,10 @@ public:
     BPlusTree(int size);
 
     T search(T key);
+
+    Node<T> *searchNode(T key);
+
+    T searchInOrderSuccessor(T key);
 };
 
 template<class T>
@@ -176,11 +182,67 @@ T BPlusTree<T>::search(T key) {
     return root->search(key);
 }
 
-// this is a debug method, input a root node, and return the path how to find the key from the root
-Node<string> *searchNodeWithDebugPrint(string k, Node<string> *node, vector<Node<string>*> *vec);
+// return the node where to insert this key, so that we can find this
+// key's inorder successor
+template<class T>
+Node<T> *BPlusTree<T>::searchNode(T key) {
+    root = root->findRoot();
+    return root->searchNode(key);
+}
 
-void printNodeForDebug(int nodeNum, vector<Node<string>*> *vec);
-void levelOrderPrintBTreeForDebug(Node<int>* root);
+// return the value of the inorder successor of the key, k that we want to insert
+// for example, if k = ab, we want to find the value of aa;
+template<class T>
+T BPlusTree<T>::searchInOrderSuccessor(T k) {
+    auto *successor = this->searchNode(k);
+    auto lastKey = successor->keys.back();
+    auto currKey = k;
+
+    // make sure the key, k, is not in the successor node:
+    for (T key: successor->keys) {
+        if (key == k) {
+            string e = "";
+            e += "The searching key: ";
+            e += k;
+            e += " is already in the BTree and data block; \n If you want to UPDATE the value, you need to delete it first, then insert it again.";
+            throw invalid_argument(e);
+        }
+    }
+
+    // there is a corner case, if the insert record is smaller than the current smallest one, aaagbmhha,
+    // need to insert at the very beginning of the data block, then, I will use a block 0 and record 0 to indicate
+    // this special return need to be handled by the code that insert a record to data block;
+    if (currKey < successor->keys.front()) {
+//        CharShort cs = CharShort(0);
+//        StingShort ss = StingShort(cs.num, cs.num);
+//        return successor->values[0]; // return block 0 record 0
+        return k;
+    }
+    if (currKey > lastKey) {
+        return successor->values.back();
+    } else {
+        for (int i = 0; i < successor->keys.size() - 1; ++i) {
+            auto ithKey = successor->keys[i];
+            auto iPlusOneKey = successor->keys[i + 1];
+            if (currKey > ithKey && currKey < iPlusOneKey) {
+                return successor->values[i];
+            }
+        }
+        string e = "";
+        e += "Cannot find a place to put the key: ";
+        e += k;
+        e += " in the current B+Tree.";
+        throw invalid_argument(e);
+    }
+}
+
+// this is a debug method, input a root node, and return the path how to find the key from the root
+Node<string> *searchNodeWithDebugPrint(string k, Node<string> *node, vector<Node<string> *> *vec);
+
+void printNodeForDebug(int nodeNum, vector<Node<string> *> *vec);
+
+void levelOrderPrintBTreeForDebug(Node<int> *root);
+
 #include "BPlusTree.tpp"
 
 #endif //PROJECT_BPLUSTREE_H

@@ -27,24 +27,47 @@ TEST(RawDataParseTest, Short_Char__String_RoundTrip) {
 }
 
 TEST(RawDataParseTest, Can_Read_Raw_Data_And_Generate_Files) {
-//    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
+    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
 //    EXPECT_EQ(1, 1);
 }
 
 TEST(RawDataParseTest, Search_Directly_From_Disk) {
 // A random key that exist
-    vector<Record> records = readRawTxtFile("../../A1_data.txt");
-    int n = 1;
-    while (n > 0) {
-        srand((unsigned int) time(NULL));
-        int random = rand() % records.size();
-        cout << random << endl;
-        Record r = records[random];
-        ASSERT_EQ(r.field1, search(r.field1));
-        n--;
-    }
-    // key does not exist
-    search("123456789");
+//    vector<Record> records = readRawTxtFile("../../A1_data.txt");
+//    int n = 1;
+//    while (n > 0) {
+//        srand((unsigned int) time(NULL));
+//        int random = rand() % records.size();
+//        cout << random << endl;
+//        Record r = records[random];
+//        ASSERT_EQ(r.field1, search(r.field1));
+//        n--;
+//    }
+//    // key does not exist
+//    search("123456789");
+//
+//    // Search the first key
+//    search("aaagbmhha");
+//
+//    // Search the last key
+//    search("zzzjzagrk");
+
+    search("xeuudlpdt");
+    search("xexzrbtpx");
+}
+
+TEST(RawDataParseTest, Insert_A_New_Record){
+//    search("xeustugyv");
+//    insert("xeustugyw long string a                                                                              \n"
+//           "                                                                                                          \n"
+//           "                                                                                          very long string");
+    insert("xeustugyz mayson is a very cute pig!");
+//    search("xeustugyw");
+//    search("xeustugyz");
+}
+
+TEST(RawDataParseTest, Search_After_Insert){
+    search("xeustugyz");
 }
 
 TEST(RawDataParseTest, Able_To_Read_Write_File_On_Disk_By_Block) {

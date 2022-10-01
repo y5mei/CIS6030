@@ -18,7 +18,7 @@ void readRawDataAndGenerateDataBaseFile(string fileName = "../A1_data.txt");
 
 // search a key from a BTree, and return and print the result;
 string search(string key, string databaseFileName ="bTree_file.txt", string btreeFileName="bTree_file.txt");
-
+void insert(string key, string databaseFileName ="bTree_file.txt", string btreeFileName="bTree_file.txt");
 class BTreeNodeBlock{
 public:
     vector<char> content; // the max block size of BTree is 512;
