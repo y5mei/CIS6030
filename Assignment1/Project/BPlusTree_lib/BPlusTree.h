@@ -84,14 +84,88 @@ public:
     vector<string> keys; // m keys
     vector<short> children; // m+1 children
     vector<string> values; // or m values but only if isLeaf is true
-    HardDiskNode(int size = 8, bool isLeaf = false);
 
-    // return which children need to search based on the keys, and k value
-    short searchNodeAtNonLeafNode(string k);
+    HardDiskNode(short maxSize = 8, bool isLeaf = false) : MAX_SIZE(maxSize), isLeaf(isLeaf) {}
 
-    string searchValueOnLeafNode(string k);
+// Search for the leaf node where the key, k, should be placed;
+    short searchNodeAtNonLeafNode(string k) {
+        auto firstKey = this->keys.front();
+        auto lastKey = this->keys.back();
+        auto currKey = k;
 
-    void deseralizeHardDiskNodeFromStr(string str);
+        if (currKey < firstKey) {
+            return this->children.front();
+        } else if (currKey >= lastKey) {
+            return this->children.back();
+        } else {
+            for (int i = 0; i < this->keys.size() - 1; ++i) {
+                auto ithKey = this->keys[i];
+                auto iPlusOneKey = this->keys[i + 1];
+                if (currKey >= ithKey && currKey < iPlusOneKey) {
+                    return this->children.at(i+1);
+                }
+            }
+            throw invalid_argument("Didn't find the subTree at where it should be!");
+        }
+    }
+
+    // Search a value from a Key, K, return -1 if key does not exist;
+    string searchValueOnLeafNode(std::string k) {
+        for (int i = 0; i < this->keys.size(); ++i) {
+            if (this->keys[i] == k) {
+                return this->values[i];
+            }
+        }
+        return "-1";
+    }
+
+    void deseralizeHardDiskNodeFromStr(string str) {
+        HardDiskNode *node = this;
+        short leaf = str[0];
+        node->isLeaf = leaf;
+
+        short m = CharShort(str[1], str[2]).num;
+        node->MAX_SIZE = m;
+
+        short next = CharShort(str[3], str[4]).num;
+        node->next = next;
+
+        short parent = CharShort(str[5], str[6]).num;
+        node->parent = parent;
+
+        short numOfKeys = CharShort(str[7], str[8]).num;
+        int idx = 9;
+        node->keys.clear();
+        for (int i = 0; i < numOfKeys; ++i) {
+            string key = "";
+            for (int j = 0; j < 9; ++j) {
+                key = key + str[idx];
+                idx++;
+            }
+            node->keys.push_back(key);
+        }
+
+        // Each time a tree niode is read in RAM, all the keys at it are displayied
+        cout << ">> Reading a TreeNode to RAM with keys: ";
+        for (string k: node->keys) {
+            cout << k << " ";
+        }
+        cout << "." << endl;
+
+        short numOfChildren = CharShort(str[idx++], str[idx++]).num;
+        node->children.clear();
+        for (int i = 0; i < numOfChildren; ++i) {
+            short child = CharShort(str[idx++], str[idx++]).num;
+            node->children.push_back(child);
+        }
+
+        short numOfvalues = CharShort(str[idx++], str[idx++]).num;
+        node->values.clear();
+        for (int i = 0; i < numOfvalues; ++i) {
+            string valStr = {str[idx++], str[idx++], str[idx++], str[idx++]};
+            node->values.push_back(valStr);
+        }
+    }
 };
 
 template<class T>
@@ -202,9 +276,9 @@ T BPlusTree<T>::searchInOrderSuccessor(T k) {
     for (T key: successor->keys) {
         if (key == k) {
             string e = "";
-            e += "The searching key: ";
+            e += "The key value: ";
             e += k;
-            e += " is already in the BTree and data block; \n If you want to UPDATE the value, you need to delete it first, then insert it again.";
+            e += " is already in the BTree and data block; \nIf you want to UPDATE the value, you need to delete it first, then insert it again.";
             throw invalid_argument(e);
         }
     }
