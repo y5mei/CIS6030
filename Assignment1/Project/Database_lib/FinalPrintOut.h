@@ -5,6 +5,8 @@
 #ifndef PROJECT_FINALPRINTOUT_H
 #define PROJECT_FINALPRINTOUT_H
 
+using namespace std;
+
 double f2();
 
 void readRawFile(std::string fileName = "../A1_data.txt");

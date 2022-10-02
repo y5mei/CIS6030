@@ -5,10 +5,8 @@
 #include <bitset>
 #include <sstream>
 
-#include "DatabaseFileIO.h"
-#include "BPlusTree.h"
-#include "RawDataParse.h"
 #include "FinalPrintOut.h"
+#include "BPlusTree.h"
 
 
 using namespace std;
@@ -27,20 +25,9 @@ void printHelpInfo() {
     cout << s << endl;
 }
 
-//void searchBTree(){
-//    cout<<" Please type the key (9 chars) that you want to search in the database file:\n"<<endl;
-//    cout<<">> ";
-//    string key;
-//    cin >> key;
-//    search(key);
-//}
-
-//void buildBTree(){
-//    cout<<"lallala"<<endl;
-//    readRawDataAndGenerateDataBaseFile("../../A1_data.txt");
-//}
-
 int main() {
+
+    cout<<"This is a test for bytes"<<endl;
     cout << "Welcome to CIS6030 Assignment-1 Question-1 (B+Tree)" << endl;\
     bool isQuit = false;
     string command;
@@ -58,6 +45,7 @@ int main() {
         }
         if (command == "q") {
             isQuit = true;
+            continue;
         }
         if (command == "b") {
             cout << "Please input the path to the raw A1_data.txt file (press return will use the default value):"
@@ -118,7 +106,5 @@ int main() {
         }
         cout<<"\nError: the command: "<<command <<" is not a valid command, please type h for more help."<<endl;
     }
-    cout << "Question-1 Program has been terminated.";
-
-
+    cout << "Question-1 Program has been terminated.\n";
 }

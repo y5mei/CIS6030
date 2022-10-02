@@ -8,6 +8,7 @@
 #include "DatabaseFileIO.h"
 #include <bitset>
 #include <tuple>
+#include <deque>
 #include <stdexcept>
 #include <vector>
 #include <filesystem>
@@ -247,7 +248,6 @@ void readRawFile(string fileName) {
     BlockListNode::saveToDisk(dummyHead, "database_file.txt");
     cout << "=====================================================================================" << endl;
     cout << "==== The input txt file is saved on disk as a database file: database_file.txt ======" << endl;
-    cout << "==== Please wait while this program is generating the B+Tree file ......       ======" << endl;
     //2.1) Build a B+Tree in RAM,
     b = dummyHead;
     BPlusTree<string> bTree = BPlusTree<string>(8);
@@ -270,6 +270,17 @@ void readRawFile(string fileName) {
         }
         b = b->next;
     }
+    StingShort myss = StingShort(59000, 99);
+    cout<<myss.block<<" "<<myss.record<<" "<<myss.str<<endl;
+    StingShort decodeMyss = StingShort(myss.str);
+    unsigned short bbb = decodeMyss.block;
+    unsigned short rrr = decodeMyss.record;
+    cout<<bbb<<endl;
+    cout<<rrr<<endl;
+
+    cout << "==== totally " << records.size() << " records are saved on " << block_cnt
+         << " blocks. ================================" << endl;
+    cout << "==== Please wait while this program is generating the B+Tree file ......       ======" << endl;
     // save the B+Tree into Disk
     saveBTreeNodesOnDisk(&bTree, "bTree_file.txt");
     cout << "==== The B+Tree file is generated on the hard disk with name:  bTree_file.txt  ======" << endl;
@@ -293,12 +304,24 @@ string searchDataBase(string key, string databaseFileName, string btreeFileName)
     HardDiskNode *h = new HardDiskNode();
     string str = readFileFromDiskByBlock(btreeFileName, 1, 512);
     h->deseralizeHardDiskNodeFromStr(str);
-//
-    while (!h->isLeaf) {
+
+    for(string k: h->keys){
+        cout<<k<<endl;
+    }
+    cout<<"========="<<endl;
+
+    for(short x: h->children){
+        cout<<x<<endl;
+    }
+    return "stop!!!";
+    int limit = 0;
+    while (!h->isLeaf && limit < 8) {
         short blockNum = h->searchNodeAtNonLeafNode(key);
+        cout << blockNum << endl;
         str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
         diskReadCnt++;
         h->deseralizeHardDiskNodeFromStr(str);
+        limit++;
     }
     str = h->searchValueOnLeafNode(key);
     if (str == "-1") {

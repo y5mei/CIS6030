@@ -6,6 +6,7 @@
 #define PROJECT_BPLUSTREE_H
 
 #include <cmath>
+#include <bitset>
 
 using namespace std;
 
@@ -13,7 +14,7 @@ using namespace std;
 struct CharShort {
     char high;
     char low;
-    short num;
+    unsigned short num;
 
     CharShort(short j) {
         num = j;
@@ -32,8 +33,8 @@ struct CharShort {
 
 // covert 4 chars to 4 shorts
 struct StingShort {
-    short block;
-    short record;
+    unsigned short block;
+    unsigned short record;
     string str;
 
     // the input str need to be 4 char in lengh
@@ -190,6 +191,10 @@ public:
     Node *searchNode(T k);
 
     void insert(T k, T v);
+    void del(T k);
+    short getMinKeyNUM() {
+        return floor((MAX_SIZE+1)/2);
+    }
 
     friend ostream &operator<<(ostream &os, Node const &node) {
         string s = "";
@@ -222,6 +227,8 @@ public:
 
     void insert(T keyValue);
 
+    void del(T key);
+
     BPlusTree(int size);
 
     T search(T key);
@@ -245,6 +252,12 @@ void BPlusTree<T>::insert(T key, T val) {
 template<class T>
 void BPlusTree<T>::insert(T key) {
     root->insert(key, key);
+    root = root->findRoot();
+}
+
+template<class T>
+void BPlusTree<T>::del(T key) {
+    // delete a key from B+Tree given that this key exist in the Tree
     root = root->findRoot();
 }
 

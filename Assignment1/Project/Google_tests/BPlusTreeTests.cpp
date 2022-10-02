@@ -240,8 +240,8 @@ TEST(BPlusTreeTest, Value_Can_Be_Inserted_To_Empty_Head) {
     EXPECT_THAT(b.root->keys, ElementsAre(23));
     EXPECT_THAT(m1->keys, ElementsAre(7, 13));
     EXPECT_THAT(m2->keys, ElementsAre(31));
-    EXPECT_THAT(n1->keys, ElementsAre(2,3,5));
-    EXPECT_THAT(n2->keys, ElementsAre(7,11));
+    EXPECT_THAT(n1->keys, ElementsAre(2, 3, 5));
+    EXPECT_THAT(n2->keys, ElementsAre(7, 11));
     EXPECT_THAT(n3->keys, ElementsAre(13, 17));
     EXPECT_THAT(n4->keys, ElementsAre(23, 29));
     EXPECT_THAT(n5->keys, ElementsAre(31, 37));
@@ -254,7 +254,7 @@ TEST(BPlusTreeTest, Build_A_BTree_From_Null) {
     //https://www.youtube.com/watch?v=DqcZLulVJ0M
     BPlusTree<int> b = BPlusTree<int>(3);
     vector<int> arr{1, 4, 7, 10, 17};
-    for(int n: arr){
+    for (int n: arr) {
         b.insert(n);
     }
     EXPECT_THAT(b.root->keys, ElementsAre(7));
@@ -311,25 +311,25 @@ TEST(BPlusTreeTest, BTree_Values_Can_Be_Searched) {
     //https://www.youtube.com/watch?v=DqcZLulVJ0M
     BPlusTree<int> b = BPlusTree<int>(3);
     vector<int> arr{1, 4, 7, 10, 17, 21, 31, 25, 19, 20, 28, 42};
-    for(int n: arr){
+    for (int n: arr) {
         b.insert(n);
     }
 
-    for (int n: arr){
+    for (int n: arr) {
         EXPECT_THAT(b.search(n), n);
     }
 
 
 }
 
-TEST(BPlusTreeTest, Insert_A_Lot_Of_Value){
+TEST(BPlusTreeTest, Insert_A_Lot_Of_Value) {
     BPlusTree<int> b = BPlusTree<int>(3);
     int SIZE = 40000; // there are about 40K records in this assignment;
     int a[SIZE];
     for (int i = 0; i < SIZE; ++i) {
         a[i] = i;
     }
-    random_shuffle(&a[0],&a[SIZE-1]); // shuffle the insert seq.
+    random_shuffle(&a[0], &a[SIZE - 1]); // shuffle the insert seq.
 
     for (int i = 0; i < SIZE; ++i) {
         b.insert(a[i]); // insert into B+Tree
@@ -337,4 +337,17 @@ TEST(BPlusTreeTest, Insert_A_Lot_Of_Value){
     for (int j = 0; j < SIZE; ++j) {
         EXPECT_THAT(b.search(j), j); // make sure they are there;
     }
+}
+
+TEST(BPlusTreeTest, Calculate_Min_Key_Num_Correctly) {
+    Node<int> n1 = Node<int>(3);
+    EXPECT_EQ(n1.getMinKeyNUM(), 2);
+    Node<int> n2 = Node<int>(8);
+    EXPECT_EQ(n2.getMinKeyNUM(), 4);
+}
+
+TEST_F(BPlusTreeListNodeTest, Delete_Keys_on_Leaf_Node) {
+    n1.del(3);
+    EXPECT_THAT(n1.keys, ElementsAre(2, 5));
+    EXPECT_THAT(n1.values, ElementsAre(2, 5));
 }

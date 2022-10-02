@@ -128,6 +128,102 @@ void Node<T>::insert(T k, T v) {
     }
 }
 
+template <typename T>
+bool contains(vector<T> vec, const T & elem)
+{
+    return any_of(vec.begin(), vec.end(), [&](const auto & x){
+        return x == elem;
+    });
+}
+
+
+template<class T>
+void Node<T>::del(T k) {
+    // if the leaf nodeN is not previously fulled, insert it in order;
+    Node *nodeN = this->searchNode(k);
+    if(!contains(nodeN->keys, k)){
+        throw invalid_argument("Error the key you want to del does not exist in the B+Tree!");
+    }
+
+    short currKeyIdx = 0;
+    for (int i = 0; i < nodeN->keys.size(); ++i) {
+        if(nodeN->keys.at(i) == k){
+            currKeyIdx = i;
+            break;
+        }else{
+            currKeyIdx = -1;
+        }
+    }
+
+    // if the leaf node has enough keys to delete one, just delete it
+    if ((nodeN->keys.size()-1)>=nodeN->getMinKeyNUM()){
+        if(currKeyIdx!=0){ // just del the key-value pair if they are not the 1st element;
+            nodeN->keys.erase(nodeN->keys.begin()+ currKeyIdx);
+            nodeN->values.erase(nodeN->values.begin()+currKeyIdx);
+        }
+    }else{
+        cout<<"this leaf node does not have enough keys to del, need to borrow from sibs"<<endl;
+    }
+//
+//    ////////////// old code below:
+//    if (nodeN->MAX_SIZE > nodeN->keys.size()) {
+//        nodeN->keys.push_back(k);
+//        nodeN->values.push_back(v);
+//        sortPairs<T, T>(nodeN->keys, nodeN->values);
+//
+//        // adjust the parent node if necessary
+//        // TODO: [Ask TA, I feel this code below will never be triggered, the example from class, insert 22 is incorrect]
+//        Node *parentNode = nodeN->parent;
+//        if (parentNode != nullptr) { // if leaf node has no parent(is root), do not need to adjust parent
+//            for (int i = 1; i < parentNode->children.size(); ++i) {
+//                if (parentNode->children[i] == nodeN) {
+//                    parentNode->keys[i - 1] = nodeN->keys[0];
+//                    break;
+//                }
+//            }
+//        }
+//    } else {
+//        // if nodeN is previously full, split into two new leaf nodes, N and M
+//        // TODO: Need to release the new node when not using
+////        Node<T> newNode = Node<T>(nodeN->MAX_SIZE, nodeN->isLeaf);
+////        Node* nodeM = &newNode;
+//        Node *nodeM = new Node<T>(nodeN->MAX_SIZE, nodeN->isLeaf);
+//        nodeM->next = nodeN->next;
+//        nodeN->next = nodeM;
+//
+//        nodeN->keys.push_back(k);
+//        nodeN->values.push_back(v);
+//        sortPairs<T, T>(nodeN->keys, nodeN->values);
+//
+//        int resizeSize = ceil((MAX_SIZE + 1.0) / 2.0);
+//        vector<T> split_keys_lo(nodeN->keys.begin(), nodeN->keys.begin() + resizeSize);
+//        vector<T> split_keys_hi(nodeN->keys.begin() + resizeSize, nodeN->keys.end());
+//        vector<T> split_vals_lo(nodeN->values.begin(), nodeN->values.begin() + resizeSize);
+//        vector<T> split_vals_hi(nodeN->values.begin() + resizeSize, nodeN->values.end());
+//
+//        nodeN->keys = split_keys_lo;
+//        nodeM->keys = split_keys_hi;
+//        nodeN->values = split_vals_lo;
+//        nodeM->values = split_vals_hi;
+//
+//        // insert the smallest key in M and the pointer to M into N's parent
+//        Node *parentOfN = nodeN->parent;
+//
+//        if (parentOfN == nullptr) {
+//            // the root can have as few as 2 children if it is not a leaf
+//            parentOfN = new Node<T>(MAX_SIZE, false);
+//            parentOfN->keys.push_back(nodeM->keys.front());
+//            parentOfN->children.push_back(nodeN);
+//            parentOfN->children.push_back(nodeM);
+//            nodeN->parent = parentOfN;
+//            nodeM->parent = parentOfN;
+//            //TODO: need to return this new parentNode as root;
+//            return;
+//        }
+//        // insert a Key Pointer pair into its parents
+//        parentOfN->insertLeafNodeIntoInteriorNode(nodeM->keys.front(), nodeM);
+//    }
+}
 
 template<class T>
 void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
