@@ -57,19 +57,23 @@ void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum)
         node->keys.push_back(key);
     }
 
-    short numOfChildren = CharShort(str[idx++], str[idx++]).num;
+    short numOfChildren = CharShort(str[idx], str[idx+1]).num;
+    idx  = idx +2;
 //    cout<<"num of children are  "<<numOfKeys<<endl;
     for (int i = 0; i < numOfChildren; ++i) {
-        short child = CharShort(str[idx++], str[idx++]).num;
+        short child = CharShort(str[idx], str[idx+1]).num;
+        idx  = idx +2;
 //        cout<< "child is: "<<child<<endl;
         node->children.push_back(vec->at(child));
     }
 
-    short numOfvalues = CharShort(str[idx++], str[idx++]).num;
+    short numOfvalues = CharShort(str[idx], str[idx+1]).num;
+    idx  = idx +2;
 
 //    cout << "num of values are  " << numOfvalues << endl;
     for (int i = 0; i < numOfvalues; ++i) {
-        string valStr = {str[idx++], str[idx++], str[idx++], str[idx++]};
+        string valStr = {str[idx], str[idx+1], str[idx+2], str[idx+3]};
+        idx  = idx +4;
         node->values.push_back(valStr);
     }
 }
@@ -270,13 +274,6 @@ void readRawFile(string fileName) {
         }
         b = b->next;
     }
-    StingShort myss = StingShort(59000, 99);
-    cout<<myss.block<<" "<<myss.record<<" "<<myss.str<<endl;
-    StingShort decodeMyss = StingShort(myss.str);
-    unsigned short bbb = decodeMyss.block;
-    unsigned short rrr = decodeMyss.record;
-    cout<<bbb<<endl;
-    cout<<rrr<<endl;
 
     cout << "==== totally " << records.size() << " records are saved on " << block_cnt
          << " blocks. ================================" << endl;
@@ -305,23 +302,12 @@ string searchDataBase(string key, string databaseFileName, string btreeFileName)
     string str = readFileFromDiskByBlock(btreeFileName, 1, 512);
     h->deseralizeHardDiskNodeFromStr(str);
 
-    for(string k: h->keys){
-        cout<<k<<endl;
-    }
-    cout<<"========="<<endl;
 
-    for(short x: h->children){
-        cout<<x<<endl;
-    }
-    return "stop!!!";
-    int limit = 0;
-    while (!h->isLeaf && limit < 8) {
+    while (!h->isLeaf) {
         short blockNum = h->searchNodeAtNonLeafNode(key);
-        cout << blockNum << endl;
         str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
         diskReadCnt++;
         h->deseralizeHardDiskNodeFromStr(str);
-        limit++;
     }
     str = h->searchValueOnLeafNode(key);
     if (str == "-1") {
@@ -365,7 +351,6 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     //====================== Step-1 ===========================================
     Record inputRecord = Record(record_str);
     string key = inputRecord.field1;
-
     //====================== Step-2 ===========================================
     // build a vector of treenode
     Node<string> curr = Node<string>();

@@ -153,17 +153,21 @@ public:
         }
         cout << "." << endl;
 
-        short numOfChildren = CharShort(str[idx++], str[idx++]).num;
+        short numOfChildren = CharShort(str[idx], str[idx+1]).num;
+        idx = idx +2;
         node->children.clear();
         for (int i = 0; i < numOfChildren; ++i) {
-            short child = CharShort(str[idx++], str[idx++]).num;
+            short child = CharShort(str[idx], str[idx+1]).num;
+            idx = idx +2;
             node->children.push_back(child);
         }
 
-        short numOfvalues = CharShort(str[idx++], str[idx++]).num;
+        short numOfvalues = CharShort(str[idx], str[idx+1]).num;
+        idx = idx +2;
         node->values.clear();
         for (int i = 0; i < numOfvalues; ++i) {
-            string valStr = {str[idx++], str[idx++], str[idx++], str[idx++]};
+            string valStr = {str[idx], str[idx+1], str[idx+2], str[idx+3]};
+            idx = idx + 4;
             node->values.push_back(valStr);
         }
     }

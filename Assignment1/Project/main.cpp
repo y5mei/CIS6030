@@ -37,8 +37,8 @@ int main() {
         cout << "(Input Command)>> ";
         cin.clear(); // some stupid code to clear the cin buffer to avoid left over \n;
         cin.sync();
-        getline(cin >> ws, command);
-
+        getline(cin >>ws, command);
+        cout<<"---------------- Running command:------------------------"<<endl;
         if (command.length()!=1){
             cout<<" Error: the input command must be length of ONE char, but \""<<command<<"\" was given!, try again!"<<endl;
             continue;
