@@ -6,10 +6,12 @@
 #define QUESTION2_READRAWFILE_H
 
 #include <string>
+#include "../Utility/Record.h"
+
 using namespace std;
 class ReadRawFile {
 
 };
 void readRawFile(const string& fileName);
-
+vector<Record> readRawTxtFile(const string& fileName = "../A1_data.txt");
 #endif //QUESTION2_READRAWFILE_H
