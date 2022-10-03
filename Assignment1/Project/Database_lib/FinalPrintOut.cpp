@@ -53,7 +53,7 @@ void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum)
             key = key + str[idx];
             idx++;
         }
-//        cout<<"Insert key : "<<key<<endl;
+        cout<<"Insert key : "<<key<<endl;
         node->keys.push_back(key);
     }
 
@@ -78,6 +78,61 @@ void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum)
     }
 }
 
+void deseralizeNodeFromArray(char* p, vector<Node<string> *> *vec, int nodeNum) {
+    Node<string> *node = vec->at(nodeNum);
+    short leaf = *p;
+    node->isLeaf = leaf;
+//    cout << "IsLeaf?: " << node->isLeaf << endl;
+
+    short m = CharShort(*(p+1), *(p+2)).num;
+    node->MAX_SIZE = m;
+//    cout<<"Max_Size is: "<<node->MAX_SIZE<<endl;
+
+    short next = CharShort(*(p+3), *(p+4)).num;
+    node->next = vec->at(next);
+
+    short parent = CharShort(*(p+5), *(p+6)).num;
+    node->parent = vec->at(parent);
+//    cout<<"parent is  "<<parent<<endl;
+
+    short numOfKeys = CharShort(*(p+7), *(p+8)).num;
+//    cout<<"num of keys are  "<<numOfKeys<<endl;
+
+    p = p+9;
+    for (int i = 0; i < numOfKeys; ++i) {
+        string key = "";
+        for (int j = 0; j < 9; ++j) {
+            key = key + *p;
+            p=p+1;
+        }
+//        cout<<"Insert key : "<<key<<endl;
+        node->keys.push_back(key);
+    }
+
+    short numOfChildren = CharShort(*p, *(p+1)).num;
+    p++;
+    p++;
+//    cout<<"num of children are  "<<numOfKeys<<endl;
+    for (int i = 0; i < numOfChildren; ++i) {
+        short child = CharShort(*p, *(p+1)).num;
+        p++;
+        p++;
+//        cout<< "child is: "<<child<<endl;
+        node->children.push_back(vec->at(child));
+    }
+
+    short numOfvalues = CharShort(*p, *(p+1)).num;
+    p++;
+    p++;
+
+//    cout << "num of values are  " << numOfvalues << endl;
+    for (int i = 0; i < numOfvalues; ++i) {
+        string valStr = {*p, *(p+1),*(p+2), *(p+3)};
+        p = p+4;
+        node->values.push_back(valStr);
+    }
+}
+
 void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string content) {
     fstream fin;
     fin.open(fileName);
@@ -98,6 +153,27 @@ void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string
     }
     fin.close();
 
+}
+
+// This is a very fast method to initialize all the btree nodes;
+char* readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
+    ifstream fin;
+    fin.open(filename);
+    long shift;
+    if (blockNum == 1) {
+        shift = 0L;
+    } else {
+        shift = (blockNum - 1) * blockSize;
+    }
+    fin.seekg(shift, ios::beg);
+
+    char content[blockSize];
+    if (fin.good()) {
+        fin.read((char *) &content, sizeof(content));
+    }
+    fin.close();
+    deseralizeNodeFromArray(content, vec, blockNum);
+    return content;
 }
 
 string readFileFromDiskByBlock(string filename, int blockNum, int blockSize) {
@@ -364,14 +440,12 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     }
     for (int i = 1; i < BTreeVector.size(); ++i) {
         auto *node = BTreeVector[i];
-        string str = readFileFromDiskByBlock(btreeFileName, i, 512);
-        deseralizeNodeFromStr(str, &BTreeVector, i);
+        readFileFromDiskByBlockReturnArray(btreeFileName, &BTreeVector,i, 512);
     }
     // New a BTree Instance, repalce the root node
     auto *root = BTreeVector.at(1);
     BPlusTree<string> bPlusTree = BPlusTree<string>(8);
     bPlusTree.root = root;
-
     //====================== Step-3 ===========================================
     //====================== Find out the node where to insert the new record =
     // Search the key and cout the result;
@@ -386,7 +460,6 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     } else {
         value = StingShort(successorValue);
     }
-
 //    string blockContent = readFileFromDiskByBlock("database_file.txt", value.block, 1024);
 //    BlockListNode bl = BlockListNode(blockContent);
 //    Record r = Record(bl.getRecordAsString(value.record));
@@ -448,7 +521,6 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
 //
 //    // save the new inserted record to BPlust Tree in RAM;
     bPlusTree.insert(inputRecord.field1, StingShort(newBlockNum, newRecordNum).str);
-
     //1) Build a database file and save to disk; block size 1024;
     BlockListNode::saveToDisk(dummyHead, "database_file.txt");
 
