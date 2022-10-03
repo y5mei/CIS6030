@@ -53,82 +53,82 @@ void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum)
             key = key + str[idx];
             idx++;
         }
-        cout<<"Insert key : "<<key<<endl;
+        cout << "Insert key : " << key << endl;
         node->keys.push_back(key);
     }
 
-    short numOfChildren = CharShort(str[idx], str[idx+1]).num;
-    idx  = idx +2;
+    short numOfChildren = CharShort(str[idx], str[idx + 1]).num;
+    idx = idx + 2;
 //    cout<<"num of children are  "<<numOfKeys<<endl;
     for (int i = 0; i < numOfChildren; ++i) {
-        short child = CharShort(str[idx], str[idx+1]).num;
-        idx  = idx +2;
+        short child = CharShort(str[idx], str[idx + 1]).num;
+        idx = idx + 2;
 //        cout<< "child is: "<<child<<endl;
         node->children.push_back(vec->at(child));
     }
 
-    short numOfvalues = CharShort(str[idx], str[idx+1]).num;
-    idx  = idx +2;
+    short numOfvalues = CharShort(str[idx], str[idx + 1]).num;
+    idx = idx + 2;
 
 //    cout << "num of values are  " << numOfvalues << endl;
     for (int i = 0; i < numOfvalues; ++i) {
-        string valStr = {str[idx], str[idx+1], str[idx+2], str[idx+3]};
-        idx  = idx +4;
+        string valStr = {str[idx], str[idx + 1], str[idx + 2], str[idx + 3]};
+        idx = idx + 4;
         node->values.push_back(valStr);
     }
 }
 
-void deseralizeNodeFromArray(char* p, vector<Node<string> *> *vec, int nodeNum) {
+void deseralizeNodeFromArray(char *p, vector<Node<string> *> *vec, int nodeNum) {
     Node<string> *node = vec->at(nodeNum);
     short leaf = *p;
     node->isLeaf = leaf;
 //    cout << "IsLeaf?: " << node->isLeaf << endl;
 
-    short m = CharShort(*(p+1), *(p+2)).num;
+    short m = CharShort(*(p + 1), *(p + 2)).num;
     node->MAX_SIZE = m;
 //    cout<<"Max_Size is: "<<node->MAX_SIZE<<endl;
 
-    short next = CharShort(*(p+3), *(p+4)).num;
+    short next = CharShort(*(p + 3), *(p + 4)).num;
     node->next = vec->at(next);
 
-    short parent = CharShort(*(p+5), *(p+6)).num;
+    short parent = CharShort(*(p + 5), *(p + 6)).num;
     node->parent = vec->at(parent);
 //    cout<<"parent is  "<<parent<<endl;
 
-    short numOfKeys = CharShort(*(p+7), *(p+8)).num;
+    short numOfKeys = CharShort(*(p + 7), *(p + 8)).num;
 //    cout<<"num of keys are  "<<numOfKeys<<endl;
 
-    p = p+9;
+    p = p + 9;
     for (int i = 0; i < numOfKeys; ++i) {
         string key = "";
         for (int j = 0; j < 9; ++j) {
             key = key + *p;
-            p=p+1;
+            p = p + 1;
         }
 //        cout<<"Insert key : "<<key<<endl;
         node->keys.push_back(key);
     }
 
-    short numOfChildren = CharShort(*p, *(p+1)).num;
+    short numOfChildren = CharShort(*p, *(p + 1)).num;
     p++;
     p++;
 //    cout<<"num of children are  "<<numOfKeys<<endl;
     for (int i = 0; i < numOfChildren; ++i) {
-        short child = CharShort(*p, *(p+1)).num;
+        short child = CharShort(*p, *(p + 1)).num;
         p++;
         p++;
 //        cout<< "child is: "<<child<<endl;
         node->children.push_back(vec->at(child));
     }
 
-    short numOfvalues = CharShort(*p, *(p+1)).num;
+    short numOfvalues = CharShort(*p, *(p + 1)).num;
     p++;
     p++;
 
 //    cout << "num of values are  " << numOfvalues << endl;
     for (int i = 0; i < numOfvalues; ++i) {
-        string valStr = {*p, *(p+1),*(p+2), *(p+3)};
-        p = p+4;
+        string valStr = {*p, *(p + 1), *(p + 2), *(p + 3)};
+        p = p + 4;
         node->values.push_back(valStr);
     }
 }
@@ -156,7 +156,7 @@ void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string
 }
 
 // This is a very fast method to initialize all the btree nodes;
-char* readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
+char *readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
     ifstream fin;
     fin.open(filename);
     long shift;
@@ -413,7 +413,6 @@ string searchDataBase(string key, string databaseFileName, string btreeFileName)
         cout << r << endl;
         return r.field1;
     }
-
 }
 
 // assignment q1 part 2-2
@@ -440,7 +439,7 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     }
     for (int i = 1; i < BTreeVector.size(); ++i) {
         auto *node = BTreeVector[i];
-        readFileFromDiskByBlockReturnArray(btreeFileName, &BTreeVector,i, 512);
+        readFileFromDiskByBlockReturnArray(btreeFileName, &BTreeVector, i, 512);
     }
     // New a BTree Instance, repalce the root node
     auto *root = BTreeVector.at(1);
@@ -582,4 +581,130 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     saveBTreeNodesOnDisk(&bPlusTree, "bTree_file.txt");
     cout << ">> Insert Success, the record for " << inputRecord.field1 << " has been inserted to Block#: "
          << newBlockNum << " and Record#: " << newRecordNum << endl;
+}
+
+
+string searchDataBaseWithoutPrintTerminal(string key, string databaseFileName, string btreeFileName) {
+    if (key.size() != 9) {
+        string error;
+        error.append("the search key must has length of 9, but you are given key with length ");
+        error.append(to_string(key.size()));
+        throw invalid_argument(error);
+    }
+
+
+    HardDiskNode *h = new HardDiskNode();
+    string str = readFileFromDiskByBlock(btreeFileName, 1, 512);
+    h->deseralizeHardDiskNodeFromStr(str);
+
+
+    while (!h->isLeaf) {
+        short blockNum = h->searchNodeAtNonLeafNode(key);
+        str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
+        h->deseralizeHardDiskNodeFromStr(str, false);
+    }
+    str = h->searchValueOnLeafNode(key);
+    string result;
+    if (str == "-1") {
+        string error;
+        error.append("The Delete Key: " + key + " does not exist in the current B+Tree! Please check your input!");
+        throw invalid_argument(error);
+    } else {
+        StingShort value = StingShort(str);
+        cout << "Going to delete Record: " << key << " From Block Num: " << value.block << ", Record Num: "
+             << value.record << endl;
+        cout << "Please wait ..." << endl;
+        result = value.str;
+    }
+    return result;
+}
+
+void deleteDataBase(string key, string databaseFileName, string btreeFileName) {
+    string location = searchDataBaseWithoutPrintTerminal(key, databaseFileName, btreeFileName);
+    // read all the blocks into RAM, and then delete one record from RAM's record
+    // generate a new B+Tree to overwrite the old one;
+    StingShort value = StingShort(location);
+
+    //====================== Step-4 ===========================================
+    //New a new Block Linked List, and read all the records from the block into a vector, insert the new record into it
+    // sort, and write everything back to this block node again
+    BlockListNode *b = new BlockListNode(readFileFromDiskByBlock("database_file.txt", 1, 1024));
+    BlockListNode *insertNode = b;
+    BlockListNode *dummyHead = b;
+    vector<BlockListNode *> vecOfBlocks;
+    vecOfBlocks.push_back(b);
+
+    int blockSize = getNumOfBlocksFromHardDiskFile("database_file.txt", 1024);
+    for (int j = 1; j < blockSize; ++j) {
+        string currBlock = readFileFromDiskByBlock("database_file.txt", j + 1, 1024);
+        b->next = new BlockListNode(currBlock);
+        b = b->next;
+        vecOfBlocks.push_back(b);
+        if (value.block == (j + 1)) {
+            insertNode = b; // save the ptr to the block that we want to modify!!!
+        }
+    }
+
+    int numRecords = insertNode->getNumOfRecord();
+    // get all the records from this block in a vector, delete the target one, and sort the rest, and put them back;
+    if (numRecords <= 1) {
+        if (value.block == 1) {
+            // if the first node is empty after delete, we assign the second node as head, then we are done;
+            dummyHead = dummyHead->next;
+        } else {
+            // otherwise, we can just delete the current node
+            BlockListNode *prev = vecOfBlocks.at(value.block - 2);
+            prev->next = insertNode->next;
+        }
+    } else {
+        // if there are at least one record in the block after delete:
+        vector<Record> records;
+        for (int m = 1; m <= numRecords; ++m) {
+            Record currRecord = Record(insertNode->getRecordAsString(m));
+            if (currRecord.field1 != key) {
+                records.push_back(currRecord);
+            }
+        }
+        sort(records.begin(), records.end(), [](Record a, Record b) { return (a.field1 < b.field1); });
+        insertNode->setNumOfRecord(0); // clear the whole block
+        // insert all the records back
+        for (Record rr: records) {
+            insertNode = insertNode->insertRecordStringToBlock(rr.content);
+        }
+        // 1) Build a database file and save to disk; block size 1024;
+    }
+
+    BlockListNode::saveToDisk(dummyHead, "database_file.txt");
+    // Collect all the records from the RAM, and save them as key-value paris, need to insert them to B+Tree latter;
+    vector<string> block_record;
+    vector<string> field_1s;
+    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
+
+    int block_cnt = 0;
+    b = dummyHead;
+    while (b != nullptr) {
+        block_cnt++;
+        for (int i = 0; i < b->getNumOfRecord(); ++i) {
+            Record r = Record(b->getRecordAsString(i + 1));
+            //1 based BlockNum RecordNum seperated by space,
+            // convert two short into a byte
+            short blockNum = block_cnt;
+            short recordNum = i + 1;
+            string record_val = StingShort(block_cnt, recordNum).str;
+            string record_key = r.field1;
+            if (field_1s.size() > 0 && field_1s.back() >= record_key) {
+                string e = "";
+                e += "Block is invalid";
+                e += field_1s.back();
+                e += " " + record_key;
+                throw invalid_argument(e);
+            }
+            field_1s.push_back(record_key);
+            block_record.push_back(record_val);
+            bPlusTree.insert(record_key, record_val);
+        }
+        b = b->next;
+    }
+    saveBTreeNodesOnDisk(&bPlusTree, "bTree_file.txt");
+    cout<<"Delete Record: "<<key<<" Successfully."<<endl;
 }

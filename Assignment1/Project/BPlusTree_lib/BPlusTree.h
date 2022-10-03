@@ -120,7 +120,7 @@ public:
         return "-1";
     }
 
-    void deseralizeHardDiskNodeFromStr(string str) {
+    void deseralizeHardDiskNodeFromStr(string str, bool isPrintOut=true) {
         HardDiskNode *node = this;
         short leaf = str[0];
         node->isLeaf = leaf;
@@ -146,12 +146,14 @@ public:
             node->keys.push_back(key);
         }
 
-        // Each time a tree niode is read in RAM, all the keys at it are displayied
-        cout << ">> Reading a TreeNode to RAM with keys: ";
-        for (string k: node->keys) {
-            cout << k << " ";
+        if(isPrintOut){
+            // Each time a tree niode is read in RAM, all the keys at it are displayied
+            cout << ">> Reading a TreeNode to RAM with keys: ";
+            for (string k: node->keys) {
+                cout << k << " ";
+            }
+            cout << "." << endl;
         }
-        cout << "." << endl;
 
         short numOfChildren = CharShort(str[idx], str[idx+1]).num;
         idx = idx +2;

@@ -104,6 +104,21 @@ int main() {
             }
             continue;
         }
+        if (command == "d"){
+            cout << "Please input the 9 chars field1 that you want to delete:"
+                 << endl;
+            cout << "(Delete Record)>> ";
+            // get the user input file path, and assign to rawDataFilePath variable
+            string record;
+            getline(cin>>ws, record);
+            try {
+                deleteDataBase(record);
+            } catch (invalid_argument e) {
+                cout<<"Error: Delete FAIL, please read the error message below:"<<endl;
+                cout << e.what() << endl;
+            }
+            continue;
+        }
         cout<<"\nError: the command: "<<command <<" is not a valid command, please type h for more help."<<endl;
     }
     cout << "Question-1 Program has been terminated.\n";
