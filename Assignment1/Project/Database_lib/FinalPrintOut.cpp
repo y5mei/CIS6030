@@ -729,18 +729,28 @@ string searchDataBaseWithOutPrint(string key, string keyEnd, string databaseFile
         str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
         h->deseralizeHardDiskNodeFromStr(str, false);
     }
+    if (h->searchValueOnLeafNode(key) == "-1") {
+        cout << ">> Error: Range Search Failed, Please read the error msg below, and retry:" << endl;
+        cout << ">> The first input key: " << key << " does not exist in the BTree" << endl;
+        return "-1";
+    }
     string startStr = h->values.front();
 
     string str2 = readFileFromDiskByBlock(btreeFileName, 1, 512);
     h->deseralizeHardDiskNodeFromStr(str2, false); // get the btree node without print
-
 
     while (!h->isLeaf) {
         short blockNum = h->searchNodeAtNonLeafNode(keyEnd);
         str2 = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
         h->deseralizeHardDiskNodeFromStr(str2, false);
     }
+    if (h->searchValueOnLeafNode(keyEnd) == "-1") {
+        cout << ">> Error: Range Search Failed, Please read the error msg below, and retry:" << endl;
+        cout << ">> The second input key: " << key << " does not exist in the BTree" << endl;
+        return "-1";
+    }
     string endStr = h->values.back();
+
 
     int numOfBlocksToRead = StingShort(endStr).block - StingShort(startStr).block;
     vector<Record*> recordsToPrint;
