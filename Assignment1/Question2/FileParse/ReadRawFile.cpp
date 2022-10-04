@@ -8,10 +8,12 @@
 #include <vector>
 #include <filesystem>
 #include <algorithm>
-#include "ReadRawFile.h"
+
 #include "../Utility/BytesOperation.h"
-#include "../Utility/Record.h"
 #include "../Utility/BlockListNode.h"
+#include "../Utility/Record.h"
+#include "ReadRawFile.h"
+
 using namespace std;
 
 // read a file and get vector of sorted records

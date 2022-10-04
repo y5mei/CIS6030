@@ -1,0 +1,9 @@
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles/rebuild_cache.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles/Question2.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles/edit_cache.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/Utility/CMakeFiles/rebuild_cache.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/Utility/CMakeFiles/Utility_lib.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/Utility/CMakeFiles/edit_cache.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/FileParse/CMakeFiles/rebuild_cache.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/FileParse/CMakeFiles/FileParse_lib.dir
+/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/FileParse/CMakeFiles/edit_cache.dir

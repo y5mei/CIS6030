@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/Question2.dir/main.cpp.o  -o Question2 Utility/libUtility_lib.a FileParse/libFileParse_lib.a 

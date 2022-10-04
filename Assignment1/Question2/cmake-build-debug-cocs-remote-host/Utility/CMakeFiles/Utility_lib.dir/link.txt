@@ -1,0 +1,2 @@
+/usr/bin/ar qc libUtility_lib.a  CMakeFiles/Utility_lib.dir/BytesOperation.cpp.o CMakeFiles/Utility_lib.dir/Record.cpp.o CMakeFiles/Utility_lib.dir/BlockListNode.cpp.o
+/usr/bin/ranlib libUtility_lib.a

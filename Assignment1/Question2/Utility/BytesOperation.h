@@ -60,9 +60,11 @@ struct StingShort {
 void coutShortToBits(short num);
 void coutStringToBits(const string& str);
 
-
 // need a hash function convert xixmvtrrb to an unsigned short?
 // I have 50000 records, each bin target to put 100 records, I will need 500 bins;
-unsigned short getHashValue(const string& key);
+unsigned short convertStringToShort(const string& key);
 unsigned short getRightMostIbits(unsigned short num, short i);
+unsigned short getHashmapKey(const string& key, short i);
+unsigned short getBlockNumNeedToSplit(unsigned short newBlockNum) ;
+unsigned short getHashmapKeyForTest(const string &key, short i);
 #endif //QUESTION2_BYTESOPERATION_H

@@ -1,12 +1,13 @@
 //
 // Created by Yao-Wen Mei on 2022/10/3.
 //
-
+#include <stdexcept>
 #include "Record.h"
+
 
 int Record::endOfField2(std::string str) {
     int cnt = 3;
-    for (int i = 0; i < str.size(); i++) {
+    for (int i = 0; i < (int) str.size(); i++) {
         if (isspace(str[i])) {
             cnt -= 1;
             if (cnt == 2 && i != 9) {

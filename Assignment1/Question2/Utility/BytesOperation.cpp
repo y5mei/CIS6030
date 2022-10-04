@@ -7,6 +7,7 @@
 #include <functional> //for std::hash
 
 #include "BytesOperation.h"
+
 using namespace std;
 
 // printout a short as bits;
@@ -17,7 +18,7 @@ void coutShortToBits(short num) {
 }
 
 // printout a string of chars as bits;
-void coutStringToBits(const string& str) {
+void coutStringToBits(const string &str) {
     cout << "Convert str to bits:" << str << endl;
     for (char c: str) {
         bitset<8> x(c);
@@ -26,16 +27,41 @@ void coutStringToBits(const string& str) {
     cout << "." << endl;
 }
 
-unsigned short getHashValue(const string& key) {
+unsigned short convertStringToShort(const string &key) {
     std::hash<std::string> hasher;
     unsigned long hashed = hasher(key); //returns std::size_t
-    return hashed%701;
+    return hashed % 701;
 }
 
 unsigned short getRightMostIbits(unsigned short num, short i) {
     // i cannot larger than 16 (2 bytes)
     unsigned short mask = 0xFFFF;
-    mask = mask >> (16-i);
+    mask = mask >> (16 - i);
 //    coutShortToBits(mask);
     return num & mask;
 }
+
+unsigned short getHashmapKey(const string &key, short i) {
+    return getRightMostIbits(convertStringToShort(key), i);
+}
+
+unsigned short getHashmapKeyForTest(const string &key, short i){
+    unsigned short x = 0;
+    if (key[3] == '1'){
+        x = x+1;
+    }
+    if (key[2] == '1'){
+        x = x+2;
+    }
+    if (key[1] == '1'){
+        x = x+4;
+    }
+    if (key[0] == '1'){
+        x = x+8;
+    }
+    return getRightMostIbits(x, i);
+}
+unsigned short getBlockNumNeedToSplit(unsigned short newBlockNum) {
+    return newBlockNum ^ 1 << (31 - __builtin_clz(newBlockNum));
+}
+

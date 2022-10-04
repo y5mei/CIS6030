@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/undergrad/2/ymei/workspace/assignment-2/tmp/tmp.03omlyZDQe/Utility/Record.cpp
+stdexcept
+-
+Record.h
+/home/undergrad/2/ymei/workspace/assignment-2/tmp/tmp.03omlyZDQe/Utility/Record.h
+
+/home/undergrad/2/ymei/workspace/assignment-2/tmp/tmp.03omlyZDQe/Utility/Record.h
+vector
+-
+string
+-
+

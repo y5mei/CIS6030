@@ -1,0 +1,2 @@
+/usr/bin/ar qc libFileParse_lib.a  CMakeFiles/FileParse_lib.dir/ReadRawFile.cpp.o
+/usr/bin/ranlib libFileParse_lib.a
