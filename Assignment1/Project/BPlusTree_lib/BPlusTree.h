@@ -89,17 +89,18 @@ public:
     HardDiskNode(short maxSize = 8, bool isLeaf = false) : MAX_SIZE(maxSize), isLeaf(isLeaf) {}
 
 // Search for the leaf node where the key, k, should be placed;
-    short searchNodeAtNonLeafNode(string k) {
+    short searchNodeAtNonLeafNode(const string& k) {
         auto firstKey = this->keys.front();
         auto lastKey = this->keys.back();
-        auto currKey = k;
+        const auto& currKey = k;
 
         if (currKey < firstKey) {
             return this->children.front();
         } else if (currKey >= lastKey) {
             return this->children.back();
         } else {
-            for (int i = 0; i < this->keys.size() - 1; ++i) {
+            int limit = keys.size() - 1;
+            for (int i = 0; i < limit; ++i) {
                 auto ithKey = this->keys[i];
                 auto iPlusOneKey = this->keys[i + 1];
                 if (currKey >= ithKey && currKey < iPlusOneKey) {
@@ -111,15 +112,15 @@ public:
     }
 
     // Search a value from a Key, K, return -1 if key does not exist;
-    string searchValueOnLeafNode(std::string k) {
-        for (int i = 0; i < this->keys.size(); ++i) {
+    string searchValueOnLeafNode(const std::string& k) {
+        int limit = keys.size();
+        for (int i = 0; i < limit; ++i) {
             if (this->keys[i] == k) {
                 return this->values[i];
             }
         }
         return "-1";
     }
-
     void deseralizeHardDiskNodeFromStr(string str, bool isPrintOut=true) {
         HardDiskNode *node = this;
         short leaf = str[0];
@@ -314,7 +315,8 @@ T BPlusTree<T>::searchInOrderSuccessor(T k) {
     if (currKey > lastKey) {
         return successor->values.back();
     } else {
-        for (int i = 0; i < successor->keys.size() - 1; ++i) {
+        int limit = successor->keys.size() - 1;
+        for (int i = 0; i < limit; ++i) {
             auto ithKey = successor->keys[i];
             auto iPlusOneKey = successor->keys[i + 1];
             if (currKey > ithKey && currKey < iPlusOneKey) {

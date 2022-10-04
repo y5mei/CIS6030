@@ -148,19 +148,23 @@ void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum)
         node->keys.push_back(key);
     }
 
-    short numOfChildren = CharShort(str[idx++], str[idx++]).num;
+    short numOfChildren = CharShort(str[idx], str[idx+1]).num;
+    idx = idx+2;
 //    cout<<"num of children are  "<<numOfKeys<<endl;
     for (int i = 0; i < numOfChildren; ++i) {
-        short child = CharShort(str[idx++], str[idx++]).num;
+        short child = CharShort(str[idx], str[idx+1]).num;
+        idx = idx +2;
 //        cout<< "child is: "<<child<<endl;
         node->children.push_back(vec->at(child));
     }
 
-    short numOfvalues = CharShort(str[idx++], str[idx++]).num;
+    short numOfvalues = CharShort(str[idx], str[idx+1]).num;
+    idx = idx +2;
 
 //    cout << "num of values are  " << numOfvalues << endl;
     for (int i = 0; i < numOfvalues; ++i) {
-        string valStr = {str[idx++], str[idx++], str[idx++], str[idx++]};
+        string valStr = {str[idx], str[idx+1], str[idx+2], str[idx+3]};
+        idx = idx + 4;
         node->values.push_back(valStr);
     }
 }
@@ -196,7 +200,7 @@ void readRawDataAndGenerateDataBaseFile(string fileName) {
             Record r = Record(b->getRecordAsString(i + 1));
             //1 based BlockNum RecordNum seperated by space,
             // convert two short into a byte
-            short blockNum = block_cnt;
+//            short blockNum = block_cnt;
             short recordNum = i + 1;
             string val = StingShort(block_cnt, recordNum).str;
             string key = r.field1;
@@ -249,7 +253,7 @@ string readFileFromDiskByBlock(string filename, int blockNum, int blockSize) {
     char content[blockSize];
     if (fin.good()) {
         fin.read((char *) &content, sizeof(content));
-        bool isLeaf = content[0];
+//        bool isLeaf = content[0];
     }
     fin.close();
 
@@ -351,8 +355,9 @@ void insert(string record_str, string databaseFileName, string btreeFileName) {
         BTreeVector.push_back(new Node<string>());
         size--;
     }
-    for (int i = 1; i < BTreeVector.size(); ++i) {
-        auto *node = BTreeVector[i];
+    int limit = BTreeVector.size();
+    for (int i = 1; i < limit; ++i) {
+//        auto *node = BTreeVector[i];
         string str = readFileFromDiskByBlock(btreeFileName, i, 512);
         deseralizeNodeFromStr(str, &BTreeVector, i);
     }
@@ -457,7 +462,7 @@ void insert(string record_str, string databaseFileName, string btreeFileName) {
             Record r = Record(b->getRecordAsString(i + 1));
             //1 based BlockNum RecordNum seperated by space,
             // convert two short into a byte
-            short blockNum = block_cnt;
+//            short blockNum = block_cnt;
             short recordNum = i + 1;
             string record_val = StingShort(block_cnt, recordNum).str;
             string record_key = r.field1;

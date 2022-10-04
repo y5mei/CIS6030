@@ -156,7 +156,7 @@ void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string
 }
 
 // This is a very fast method to initialize all the btree nodes;
-char *readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
+void readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
     ifstream fin;
     fin.open(filename);
     long shift;
@@ -173,7 +173,7 @@ char *readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *>
     }
     fin.close();
     deseralizeNodeFromArray(content, vec, blockNum);
-    return content;
+    return;
 }
 
 string readFileFromDiskByBlock(string filename, int blockNum, int blockSize) {
@@ -437,8 +437,8 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
         BTreeVector.push_back(new Node<string>());
         size--;
     }
-    for (int i = 1; i < BTreeVector.size(); ++i) {
-        auto *node = BTreeVector[i];
+    int limit = BTreeVector.size();
+    for (int i = 1; i < limit; ++i) {
         readFileFromDiskByBlockReturnArray(btreeFileName, &BTreeVector, i, 512);
     }
     // New a BTree Instance, repalce the root node
@@ -463,6 +463,7 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
 //    BlockListNode bl = BlockListNode(blockContent);
 //    Record r = Record(bl.getRecordAsString(value.record));
 
+    cout << "Trying to insert the new record, Please wait..." << endl;
     //====================== Step-4 ===========================================
     //New a new Block Linked List, and read all the records from the block into a vector, insert the new record into it
     // sort, and write everything back to this block node again
@@ -514,8 +515,8 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
             newBlockNum += 1;
         }
     }
-//    cout << "Going to insert the new record: " << inputRecord.field1 << " at Block, Record: " << newBlockNum << "  "
-//         << newRecordNum << endl;
+    cout << "Going to insert the new record: " << inputRecord.field1 << " at Block, Record: " << newBlockNum << "  "
+         << newRecordNum << endl;
 //
 //
 //    // save the new inserted record to BPlust Tree in RAM;
@@ -539,17 +540,17 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
             Record r = Record(b->getRecordAsString(i + 1));
             //1 based BlockNum RecordNum seperated by space,
             // convert two short into a byte
-            short blockNum = block_cnt;
+//            short blockNum = block_cnt;
             short recordNum = i + 1;
             string record_val = StingShort(block_cnt, recordNum).str;
             string record_key = r.field1;
-            if (field_1s.size() > 0 && field_1s.back() >= record_key) {
-                string e = "";
-                e += "Block is invalid";
-                e += field_1s.back();
-                e += " " + record_key;
-                throw invalid_argument(e);
-            }
+//            if (field_1s.size() > 0 && field_1s.back() >= record_key) {
+//                string e = "";
+//                e += "Block is invalid";
+//                e += field_1s.back();
+//                e += " " + record_key;
+//                throw invalid_argument(e);
+//            }
             field_1s.push_back(record_key);
 
             block_record.push_back(record_val);
@@ -561,16 +562,16 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     while (ptr != nullptr) {
         int curr_node_size = ptr->keys.size();
         for (int i = 0; i < curr_node_size; ++i) {
-            if (field_1s.at(cnter) != ptr->keys.at(i)) {
-                string e = "";
-                e += "leaf node value does not match block record sequence! \n At Index: ";
-                e += to_string(cnter);
-                e += " Field1 in Block is ";
-                e += field_1s.at(cnter);
-                e += ". Field1 in BTree is ";
-                e += ptr->keys.at(i);
-                throw invalid_argument(e);
-            }
+//            if (field_1s.at(cnter) != ptr->keys.at(i)) {
+//                string e = "";
+//                e += "leaf node value does not match block record sequence! \n At Index: ";
+//                e += to_string(cnter);
+//                e += " Field1 in Block is ";
+//                e += field_1s.at(cnter);
+//                e += ". Field1 in BTree is ";
+//                e += ptr->keys.at(i);
+//                throw invalid_argument(e);
+//            }
             // update all the values and save back to the disk
             ptr->values[i] = block_record[cnter];
             cnter++;
@@ -688,7 +689,7 @@ void deleteDataBase(string key, string databaseFileName, string btreeFileName) {
             Record r = Record(b->getRecordAsString(i + 1));
             //1 based BlockNum RecordNum seperated by space,
             // convert two short into a byte
-            short blockNum = block_cnt;
+//            short blockNum = block_cnt;
             short recordNum = i + 1;
             string record_val = StingShort(block_cnt, recordNum).str;
             string record_key = r.field1;
@@ -706,5 +707,66 @@ void deleteDataBase(string key, string databaseFileName, string btreeFileName) {
         b = b->next;
     }
     saveBTreeNodesOnDisk(&bPlusTree, "bTree_file.txt");
-    cout<<"Delete Record: "<<key<<" Successfully."<<endl;
+    cout << "Delete Record: " << key << " Successfully." << endl;
 }
+
+// assignment q1 part 2-1
+string searchDataBaseWithOutPrint(string key, string keyEnd, string databaseFileName, string btreeFileName) {
+
+    HardDiskNode *h = new HardDiskNode();
+    string str = readFileFromDiskByBlock(btreeFileName, 1, 512);
+    h->deseralizeHardDiskNodeFromStr(str, false); // get the btree node without print
+
+
+    while (!h->isLeaf) {
+        short blockNum = h->searchNodeAtNonLeafNode(key);
+        str = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
+        h->deseralizeHardDiskNodeFromStr(str, false);
+    }
+    string startStr = h->values.front();
+
+    string str2 = readFileFromDiskByBlock(btreeFileName, 1, 512);
+    h->deseralizeHardDiskNodeFromStr(str2, false); // get the btree node without print
+
+
+    while (!h->isLeaf) {
+        short blockNum = h->searchNodeAtNonLeafNode(keyEnd);
+        str2 = readFileFromDiskByBlock(btreeFileName, blockNum, 512);
+        h->deseralizeHardDiskNodeFromStr(str2, false);
+    }
+    string endStr = h->values.back();
+
+    int numOfBlocksToRead = StingShort(endStr).block - StingShort(startStr).block;
+    vector<Record*> recordsToPrint;
+    short starBlockNum = StingShort(startStr).block;
+    while (numOfBlocksToRead>=0){
+        BlockListNode bl = BlockListNode(readFileFromDiskByBlock(databaseFileName, starBlockNum, 1024));
+        //loop
+        int limit = bl.getNumOfRecord();
+        for (int i = 1; i <= limit; ++i) {
+            Record* r = new Record(bl.getRecordAsString(i));
+            if(r->field1>=key && r->field1<=keyEnd){
+                recordsToPrint.push_back(r);
+            }
+        }
+        starBlockNum++;
+        numOfBlocksToRead--;
+    }
+    for(Record* rr: recordsToPrint){
+        cout<<"---------------------------------------"<<endl;
+        cout<<*rr<<endl;
+        delete rr; // delete all the obj has been newed before??? I guess this is how it works?
+    }
+    if (recordsToPrint.empty()){
+        throw invalid_argument("There is no record matches the range search. ");
+    }
+    return "";
+}
+
+
+void rangeSearch(string key1, string key2, std::string databaseFileName, std::string btreeFileName) {
+    // get the two keys
+    searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
+}
+
+

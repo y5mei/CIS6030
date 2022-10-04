@@ -38,7 +38,8 @@ Node<T> *Node<T>::searchNode(T k) {
         } else if (currKey >= lastKey) {
             return this->children.back()->searchNode(k);
         } else {
-            for (int i = 0; i < this->keys.size() - 1; ++i) {
+            int limit =  this->keys.size() - 1;
+            for (int i = 0; i < limit; ++i) {
                 auto ithKey = this->keys[i];
                 auto iPlusOneKey = this->keys[i + 1];
                 if (currKey >= ithKey && currKey < iPlusOneKey) {
@@ -53,13 +54,15 @@ Node<T> *Node<T>::searchNode(T k) {
 template<class T1, class T2>
 void sortPairs(vector<T1> &vk, vector<T2> &vv) {
     vector<pair<T1, T2>> vect;
-    for (int i = 0; i < vk.size(); i++)
+    int limit1 = vk.size();
+    for (int i = 0; i < limit1; i++)
         vect.push_back(make_pair(vk[i], vv[i]));
     // sort
     sort(vect.begin(), vect.end());
 
     // put back into the same place
-    for (int i = 0; i < vect.size(); i++) {
+    int limit2 = vect.size();
+    for (int i = 0; i < limit2; i++) {
         vk[i] = vect[i].first;
         vv[i] = vect[i].second;
     }
@@ -69,7 +72,9 @@ template<class T>
 void Node<T>::insert(T k, T v) {
     // if the leaf nodeN is not previously fulled, insert it in order;
     Node *nodeN = this->searchNode(k);
-    if (nodeN->MAX_SIZE > nodeN->keys.size()) {
+    short limit_size = nodeN->MAX_SIZE;
+    short curr_size = nodeN->keys.size();
+    if (limit_size > curr_size) {
         nodeN->keys.push_back(k);
         nodeN->values.push_back(v);
         sortPairs<T, T>(nodeN->keys, nodeN->values);
@@ -78,7 +83,8 @@ void Node<T>::insert(T k, T v) {
         // TODO: [Ask TA, I feel this code below will never be triggered, the example from class, insert 22 is incorrect]
         Node *parentNode = nodeN->parent;
         if (parentNode != nullptr) { // if leaf node has no parent(is root), do not need to adjust parent
-            for (int i = 1; i < parentNode->children.size(); ++i) {
+            int limit = parentNode->children.size();
+            for (int i = 1; i < limit; ++i) {
                 if (parentNode->children[i] == nodeN) {
                     parentNode->keys[i - 1] = nodeN->keys[0];
                     break;
@@ -227,7 +233,9 @@ void Node<T>::del(T k) {
 
 template<class T>
 void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
-    if (this->MAX_SIZE > this->keys.size()) {
+    short limit_size = this->MAX_SIZE;
+    short curr_size = this->keys.size();
+    if (limit_size > curr_size) {
         // increase the size of keys and children by one, fill with the key and pointer
         this->children.push_back(newChildNode);
         this->keys.push_back(newKey);
@@ -243,7 +251,8 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
         // Note that keys are not always equal to the first element in the children's key
         // if an interior node has children's children, the key is the first key of the children's children
         // if an interior node's children is leaf node, then the key is the leaf node's first key
-        for (int i = 0; i < this->keys.size(); ++i) {
+        short limit = this->keys.size();
+        for (int i = 0; i < limit; ++i) {
             Node *c = this->children[i + 1];
             while(!c->isLeaf){
                 c = c->children[0];
@@ -268,7 +277,8 @@ void Node<T>::insertLeafNodeIntoInteriorNode(T newKey, Node *newChildNode) {
              });
 
         // sort all the keys
-        for (int i = 0; i < this->keys.size(); ++i) {
+        int limit = this->keys.size();
+        for (int i = 0; i < limit; ++i) {
             Node *c = this->children[i + 1];
             while(!c->isLeaf){
                 c = c->children[0];

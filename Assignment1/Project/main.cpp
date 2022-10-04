@@ -17,11 +17,13 @@ void printHelpInfo() {
     s += " This is the program for CIS6030 Assignment-1 Question-1\n";
     s += " 1. ) For part ONE of this question, Please type `b` to BUILD a database file and a b+tree file on the hard disk.\n";
     s += " You can re-run this build command many times as you want, and the new generated files will overwrite the old ones.\n";
-    s += " 2.) For part TWO of this Question, Please type `s` to search, `i` to insert, and `d` to delete a record.\n";
+    s += " 2.) For part TWO of this Question, Please type `s` to search, `i` to insert, and `d` to delete a record, `r` to do range search\n";
     s += "    * for `s` search, after press `s`, and enter, you will be promoted to input a string of length 9 (field1);\n";
     s += "    * for `i` insert, after press `i`, and enter, you will be promoted to input a string of a full record;\n";
     s += "        - the record you input must include field 1, field 2 and field 3. The field 1 must be diff than any existing keys.\n";
     s += "    * for `d` delete, after press `d`, and enter, you will be promoted to input a string of length 9 (field1);\n";
+    s += "    * for `r` range search, after press `r` and enter, you will be promoted to input 9 chars for the start key,\n"
+         "      then you will be promoted to input another 9 chars for the end key, all the records within this range will be displayed.";
     cout << s << endl;
 }
 
@@ -62,12 +64,12 @@ int main() {
                 istr >> rawDataFilePath;
             }
             try {
-                if (rawDataFilePath == "") {
+                if (rawDataFilePath.empty()) {
                     readRawFile();
                 } else {
                     readRawFile(rawDataFilePath);
                 }
-            } catch (invalid_argument e) {
+            } catch (invalid_argument const &e) {
                 cout << e.what() << endl;
             }
             continue;
@@ -79,7 +81,23 @@ int main() {
             cin >> searchKey;
             try {
                 searchDataBase(searchKey);
-            } catch (invalid_argument e) {
+            } catch (invalid_argument const &e) {
+                cout << e.what() << endl;
+            }
+            continue;
+        }
+        if (command == "r") {
+            cout << "Please input the staring keys (9 bytes) for the range you want to search:" << endl;
+            cout << "(Start Range Search Key)>> ";
+            string searchKey1;
+            cin >> searchKey1;
+            cout << "Please input the ending keys (9 bytes) for the range you want to search:" << endl;
+            cout << "(End Range Search Key)>> ";
+            string searchKey2;
+            cin >> searchKey2;
+            try {
+                rangeSearch(searchKey1, searchKey2);
+            } catch (invalid_argument const &e) {
                 cout << e.what() << endl;
             }
             continue;
@@ -98,7 +116,7 @@ int main() {
             getline(cin>>ws, record);
             try {
                 insertDataBase(record);
-            } catch (invalid_argument e) {
+            } catch (invalid_argument const &e) {
                 cout<<"Error: Insert FAIL, please read the error message below:"<<endl;
                 cout << e.what() << endl;
             }
@@ -113,7 +131,7 @@ int main() {
             getline(cin>>ws, record);
             try {
                 deleteDataBase(record);
-            } catch (invalid_argument e) {
+            } catch (invalid_argument const &e) {
                 cout<<"Error: Delete FAIL, please read the error message below:"<<endl;
                 cout << e.what() << endl;
             }
