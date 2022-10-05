@@ -30,7 +30,7 @@ void coutStringToBits(const string &str) {
 unsigned short convertStringToShort(const string &key) {
     std::hash<std::string> hasher;
     unsigned long hashed = hasher(key); //returns std::size_t
-    return hashed % 701;
+    return hashed % 60029;
 }
 
 unsigned short getRightMostIbits(unsigned short num, short i) {
@@ -61,6 +61,7 @@ unsigned short getHashmapKeyForTest(const std::string &key, short i){
     }
     return getRightMostIbits(x, i);
 }
+// set the highest bit to zero for a short number;
 unsigned short getBlockNumNeedToSplit(unsigned short newBlockNum) {
     return newBlockNum ^ 1 << (31 - __builtin_clz(newBlockNum));
 }

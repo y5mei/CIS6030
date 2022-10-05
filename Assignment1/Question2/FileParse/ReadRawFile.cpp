@@ -12,6 +12,7 @@
 #include "../Utility/BytesOperation.h"
 #include "../Utility/BlockListNode.h"
 #include "../Utility/Record.h"
+#include "../Utility/HashTableBlock.h"
 #include "ReadRawFile.h"
 
 using namespace std;
@@ -76,4 +77,14 @@ void readRawFile(const string& fileName) {
 
     cout << "==== totally " << records.size() << " records are saved on " << block_cnt
          << " blocks. ================================" << endl;
+    cout<<"=====================================================================================\n";
+    // save this two vectors in a BTree in Ram:
+    HashTable ht = HashTable();
+    for(Record r: records){
+        ht.insert(r.field1, r.content, getHashmapKey);
+    }
+    cout<<ht<<endl;
+    ht.saveToDisk();
+    cout<<"================== The first part (saving) of A1Q2 is finished ======================\n";
+    cout<<"=====================================================================================\n";
 }

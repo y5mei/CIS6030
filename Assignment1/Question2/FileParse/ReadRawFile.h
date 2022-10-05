@@ -12,6 +12,6 @@ using namespace std;
 class ReadRawFile {
 
 };
-void readRawFile(const string& fileName);
+void readRawFile(const string& fileName = "../A1_data.txt");
 vector<Record> readRawTxtFile(const string& fileName = "../A1_data.txt");
 #endif //QUESTION2_READRAWFILE_H
