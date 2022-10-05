@@ -27,7 +27,7 @@ vector<Record> readRawTxtFile(const string& fileName) {
         Record r = Record(inputText);
         records.push_back(r);
     }
-    sort(records.begin(), records.end(), [](const Record& a, const Record& b) { return (a.field1 < b.field1); });
+//    sort(records.begin(), records.end(), [](const Record& a, const Record& b) { return (a.field1 < b.field1); });
     return records;
 }
 
