@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/Question2.dir/main.cpp.o  -o Question2 Utility/libUtility_lib.a FileParse/libFileParse_lib.a 
+/usr/bin/c++  -g   CMakeFiles/Question2.dir/main.cpp.o CMakeFiles/Question2.dir/Utility/Record.cpp.o CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o  -o Question2 

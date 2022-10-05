@@ -70,19 +70,92 @@ CMakeFiles/Question2.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/main.cpp -o CMakeFiles/Question2.dir/main.cpp.s
 
+CMakeFiles/Question2.dir/Utility/Record.cpp.o: CMakeFiles/Question2.dir/flags.make
+CMakeFiles/Question2.dir/Utility/Record.cpp.o: ../Utility/Record.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Question2.dir/Utility/Record.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Question2.dir/Utility/Record.cpp.o -c /home/undergrad/2/ymei/workspace/A1-2/Utility/Record.cpp
+
+CMakeFiles/Question2.dir/Utility/Record.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Question2.dir/Utility/Record.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/undergrad/2/ymei/workspace/A1-2/Utility/Record.cpp > CMakeFiles/Question2.dir/Utility/Record.cpp.i
+
+CMakeFiles/Question2.dir/Utility/Record.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/Utility/Record.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/Utility/Record.cpp -o CMakeFiles/Question2.dir/Utility/Record.cpp.s
+
+CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o: CMakeFiles/Question2.dir/flags.make
+CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o: ../Utility/BlockListNode.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o -c /home/undergrad/2/ymei/workspace/A1-2/Utility/BlockListNode.cpp
+
+CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/undergrad/2/ymei/workspace/A1-2/Utility/BlockListNode.cpp > CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.i
+
+CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/Utility/BlockListNode.cpp -o CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.s
+
+CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o: CMakeFiles/Question2.dir/flags.make
+CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o: ../Utility/BytesOperation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o -c /home/undergrad/2/ymei/workspace/A1-2/Utility/BytesOperation.cpp
+
+CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/undergrad/2/ymei/workspace/A1-2/Utility/BytesOperation.cpp > CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.i
+
+CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/Utility/BytesOperation.cpp -o CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.s
+
+CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o: CMakeFiles/Question2.dir/flags.make
+CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o: ../FileParse/ReadRawFile.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o -c /home/undergrad/2/ymei/workspace/A1-2/FileParse/ReadRawFile.cpp
+
+CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/undergrad/2/ymei/workspace/A1-2/FileParse/ReadRawFile.cpp > CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.i
+
+CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/FileParse/ReadRawFile.cpp -o CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.s
+
+CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o: CMakeFiles/Question2.dir/flags.make
+CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o: ../Utility/HashTableBlock.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o -c /home/undergrad/2/ymei/workspace/A1-2/Utility/HashTableBlock.cpp
+
+CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/undergrad/2/ymei/workspace/A1-2/Utility/HashTableBlock.cpp > CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.i
+
+CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/undergrad/2/ymei/workspace/A1-2/Utility/HashTableBlock.cpp -o CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.s
+
 # Object files for target Question2
 Question2_OBJECTS = \
-"CMakeFiles/Question2.dir/main.cpp.o"
+"CMakeFiles/Question2.dir/main.cpp.o" \
+"CMakeFiles/Question2.dir/Utility/Record.cpp.o" \
+"CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o" \
+"CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o" \
+"CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o" \
+"CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o"
 
 # External object files for target Question2
 Question2_EXTERNAL_OBJECTS =
 
 Question2: CMakeFiles/Question2.dir/main.cpp.o
+Question2: CMakeFiles/Question2.dir/Utility/Record.cpp.o
+Question2: CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o
+Question2: CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o
+Question2: CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o
+Question2: CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o
 Question2: CMakeFiles/Question2.dir/build.make
-Question2: Utility/libUtility_lib.a
-Question2: FileParse/libFileParse_lib.a
 Question2: CMakeFiles/Question2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Question2"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable Question2"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Question2.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

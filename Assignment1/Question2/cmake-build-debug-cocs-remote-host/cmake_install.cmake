@@ -37,13 +37,6 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for each subdirectory.
-  include("/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/Utility/cmake_install.cmake")
-  include("/home/undergrad/2/ymei/workspace/A1-2/cmake-build-debug-cocs-remote-host/FileParse/cmake_install.cmake")
-
-endif()
-
 if(CMAKE_INSTALL_COMPONENT)
   set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
 else()

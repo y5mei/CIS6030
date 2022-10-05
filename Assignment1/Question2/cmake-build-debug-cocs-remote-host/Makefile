@@ -123,31 +123,140 @@ Question2/fast:
 	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/build
 .PHONY : Question2/fast
 
-#=============================================================================
-# Target rules for targets named Utility_lib
+FileParse/ReadRawFile.o: FileParse/ReadRawFile.cpp.o
 
-# Build rule for target.
-Utility_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Utility_lib
-.PHONY : Utility_lib
+.PHONY : FileParse/ReadRawFile.o
 
-# fast build rule for target.
-Utility_lib/fast:
-	$(MAKE) -f Utility/CMakeFiles/Utility_lib.dir/build.make Utility/CMakeFiles/Utility_lib.dir/build
-.PHONY : Utility_lib/fast
+# target to build an object file
+FileParse/ReadRawFile.cpp.o:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.o
+.PHONY : FileParse/ReadRawFile.cpp.o
 
-#=============================================================================
-# Target rules for targets named FileParse_lib
+FileParse/ReadRawFile.i: FileParse/ReadRawFile.cpp.i
 
-# Build rule for target.
-FileParse_lib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FileParse_lib
-.PHONY : FileParse_lib
+.PHONY : FileParse/ReadRawFile.i
 
-# fast build rule for target.
-FileParse_lib/fast:
-	$(MAKE) -f FileParse/CMakeFiles/FileParse_lib.dir/build.make FileParse/CMakeFiles/FileParse_lib.dir/build
-.PHONY : FileParse_lib/fast
+# target to preprocess a source file
+FileParse/ReadRawFile.cpp.i:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.i
+.PHONY : FileParse/ReadRawFile.cpp.i
+
+FileParse/ReadRawFile.s: FileParse/ReadRawFile.cpp.s
+
+.PHONY : FileParse/ReadRawFile.s
+
+# target to generate assembly for a file
+FileParse/ReadRawFile.cpp.s:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/FileParse/ReadRawFile.cpp.s
+.PHONY : FileParse/ReadRawFile.cpp.s
+
+Utility/BlockListNode.o: Utility/BlockListNode.cpp.o
+
+.PHONY : Utility/BlockListNode.o
+
+# target to build an object file
+Utility/BlockListNode.cpp.o:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.o
+.PHONY : Utility/BlockListNode.cpp.o
+
+Utility/BlockListNode.i: Utility/BlockListNode.cpp.i
+
+.PHONY : Utility/BlockListNode.i
+
+# target to preprocess a source file
+Utility/BlockListNode.cpp.i:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.i
+.PHONY : Utility/BlockListNode.cpp.i
+
+Utility/BlockListNode.s: Utility/BlockListNode.cpp.s
+
+.PHONY : Utility/BlockListNode.s
+
+# target to generate assembly for a file
+Utility/BlockListNode.cpp.s:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BlockListNode.cpp.s
+.PHONY : Utility/BlockListNode.cpp.s
+
+Utility/BytesOperation.o: Utility/BytesOperation.cpp.o
+
+.PHONY : Utility/BytesOperation.o
+
+# target to build an object file
+Utility/BytesOperation.cpp.o:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.o
+.PHONY : Utility/BytesOperation.cpp.o
+
+Utility/BytesOperation.i: Utility/BytesOperation.cpp.i
+
+.PHONY : Utility/BytesOperation.i
+
+# target to preprocess a source file
+Utility/BytesOperation.cpp.i:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.i
+.PHONY : Utility/BytesOperation.cpp.i
+
+Utility/BytesOperation.s: Utility/BytesOperation.cpp.s
+
+.PHONY : Utility/BytesOperation.s
+
+# target to generate assembly for a file
+Utility/BytesOperation.cpp.s:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/BytesOperation.cpp.s
+.PHONY : Utility/BytesOperation.cpp.s
+
+Utility/HashTableBlock.o: Utility/HashTableBlock.cpp.o
+
+.PHONY : Utility/HashTableBlock.o
+
+# target to build an object file
+Utility/HashTableBlock.cpp.o:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.o
+.PHONY : Utility/HashTableBlock.cpp.o
+
+Utility/HashTableBlock.i: Utility/HashTableBlock.cpp.i
+
+.PHONY : Utility/HashTableBlock.i
+
+# target to preprocess a source file
+Utility/HashTableBlock.cpp.i:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.i
+.PHONY : Utility/HashTableBlock.cpp.i
+
+Utility/HashTableBlock.s: Utility/HashTableBlock.cpp.s
+
+.PHONY : Utility/HashTableBlock.s
+
+# target to generate assembly for a file
+Utility/HashTableBlock.cpp.s:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/HashTableBlock.cpp.s
+.PHONY : Utility/HashTableBlock.cpp.s
+
+Utility/Record.o: Utility/Record.cpp.o
+
+.PHONY : Utility/Record.o
+
+# target to build an object file
+Utility/Record.cpp.o:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/Record.cpp.o
+.PHONY : Utility/Record.cpp.o
+
+Utility/Record.i: Utility/Record.cpp.i
+
+.PHONY : Utility/Record.i
+
+# target to preprocess a source file
+Utility/Record.cpp.i:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/Record.cpp.i
+.PHONY : Utility/Record.cpp.i
+
+Utility/Record.s: Utility/Record.cpp.s
+
+.PHONY : Utility/Record.s
+
+# target to generate assembly for a file
+Utility/Record.cpp.s:
+	$(MAKE) -f CMakeFiles/Question2.dir/build.make CMakeFiles/Question2.dir/Utility/Record.cpp.s
+.PHONY : Utility/Record.cpp.s
 
 main.o: main.cpp.o
 
@@ -185,8 +294,21 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... Question2"
 	@echo "... edit_cache"
-	@echo "... Utility_lib"
-	@echo "... FileParse_lib"
+	@echo "... FileParse/ReadRawFile.o"
+	@echo "... FileParse/ReadRawFile.i"
+	@echo "... FileParse/ReadRawFile.s"
+	@echo "... Utility/BlockListNode.o"
+	@echo "... Utility/BlockListNode.i"
+	@echo "... Utility/BlockListNode.s"
+	@echo "... Utility/BytesOperation.o"
+	@echo "... Utility/BytesOperation.i"
+	@echo "... Utility/BytesOperation.s"
+	@echo "... Utility/HashTableBlock.o"
+	@echo "... Utility/HashTableBlock.i"
+	@echo "... Utility/HashTableBlock.s"
+	@echo "... Utility/Record.o"
+	@echo "... Utility/Record.i"
+	@echo "... Utility/Record.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

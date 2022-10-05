@@ -45,7 +45,7 @@ unsigned short getHashmapKey(const string &key, short i) {
     return getRightMostIbits(convertStringToShort(key), i);
 }
 
-unsigned short getHashmapKeyForTest(const string &key, short i){
+unsigned short getHashmapKeyForTest(const std::string &key, short i){
     unsigned short x = 0;
     if (key[3] == '1'){
         x = x+1;
