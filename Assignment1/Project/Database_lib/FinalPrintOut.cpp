@@ -156,6 +156,23 @@ void writefileToDiskByBlock(string fileName, int blockNum, int blockSize, string
 }
 
 // This is a very fast method to initialize all the btree nodes;
+void readFileFromDiskByBlockReturnArrayWithoutFileClose(ifstream& fin, string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
+    long shift;
+    if (blockNum == 1) {
+        shift = 0L;
+    } else {
+        shift = (blockNum - 1) * blockSize;
+    }
+    fin.seekg(shift, ios::beg);
+
+    char content[blockSize];
+    if (fin.good()) {
+        fin.read((char *) &content, sizeof(content));
+    }
+    deseralizeNodeFromArray(content, vec, blockNum);
+    return;
+}
+
 void readFileFromDiskByBlockReturnArray(string filename, vector<Node<string> *> *vec, int blockNum, int blockSize) {
     ifstream fin;
     fin.open(filename);
@@ -440,9 +457,12 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
         size--;
     }
     int limit = BTreeVector.size();
+    ifstream fin;
+    fin.open(btreeFileName);
     for (int i = 1; i < limit; ++i) {
-        readFileFromDiskByBlockReturnArray(btreeFileName, &BTreeVector, i, 512);
+        readFileFromDiskByBlockReturnArrayWithoutFileClose(fin, btreeFileName, &BTreeVector, i, 512);
     }
+    fin.close();
     // New a BTree Instance, repalce the root node
     auto *root = BTreeVector.at(1);
     BPlusTree<string> bPlusTree = BPlusTree<string>(8);
