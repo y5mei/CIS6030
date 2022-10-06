@@ -372,8 +372,8 @@ void HashTable::saveToDisk(const string &fileName) {
     // Now need to update the header again for the last updated overflow position
     // header file contains i, n, r, overflow shift (overflow will start from block 15000)
     // block size 200 kb, # records (2 bytes) + overflow jump (2 bytes) 10 records (9+4)x10 = 150 bytes
-    buffer[200] = {'\0'};
-    char *bb = buffer;
+    char newBuffer[200] = {'\0'};
+    char *bb = newBuffer;
     // write the header
     currBLKnum = 1;
     // Use memcpy copy to write to a file!
@@ -384,7 +384,7 @@ void HashTable::saveToDisk(const string &fileName) {
 
     // write to file
     fin.seekp(getShift(currBLKnum, 200));
-    fin.write(buffer, 200);
+    fin.write(newBuffer, 200);
     fin.close();
     cout << "=====================================================================================\n"
             "==== The Hash table file is saved on disk as :         " << fileName << "    ======\n"

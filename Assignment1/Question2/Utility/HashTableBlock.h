@@ -93,6 +93,8 @@ public:
 
     void insert(const std::string &key, std::string value, unsigned short (*fhash)(const std::string &key, short i), const string &fileName = "linked_hashtable.txt");
 
+    void writeVectorOfValuesToBuckets(vector<string>* vec, unsigned short bucketNumStartWritting, const string &fileName = "linked_hashtable.txt");
+
     void insertToDiskBlock(const std::string &key, const std::string& value, unsigned short baseOneIndexToRead, const string &fileName = "linked_hashtable.txt");
     friend ostream &operator<<(ostream &os, HashTableFromDisk const &ht) {
         string s;
