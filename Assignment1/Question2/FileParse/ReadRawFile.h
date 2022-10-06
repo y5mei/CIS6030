@@ -14,4 +14,5 @@ class ReadRawFile {
 };
 void readRawFile(const string& fileName = "../A1_data.txt");
 vector<Record> readRawTxtFile(const string& fileName = "../A1_data.txt");
+void readDataFromDatabaseFileViaLocationString(string location);
 #endif //QUESTION2_READRAWFILE_H

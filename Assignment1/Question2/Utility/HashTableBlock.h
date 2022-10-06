@@ -86,9 +86,14 @@ public:
 
     explicit HashTableFromDisk(const string &fileName = "linked_hashtable.txt");
 
-    void searchForKey(const string &key, unsigned short (*fhash)(const std::string &hashkey, short hashi),
+    std::string searchForKey(const string &key, unsigned short (*fhash)(const std::string &hashkey, short hashi),
                       const string &fileName = "linked_hashtable.txt");
+    static std::string searchForKeyWithHashedKey(const string &key, unsigned short hashedKey, unsigned short (*fhash)(const std::string &hashkey, short hashi),
+                             const string &fileName = "linked_hashtable.txt",int diskReadCnter = 0 );
 
+    void insert(const std::string &key, std::string value, unsigned short (*fhash)(const std::string &key, short i), const string &fileName = "linked_hashtable.txt");
+
+    void insertToDiskBlock(const std::string &key, const std::string& value, unsigned short baseOneIndexToRead, const string &fileName = "linked_hashtable.txt");
     friend ostream &operator<<(ostream &os, HashTableFromDisk const &ht) {
         string s;
         s.append("=====================================================================================\n");
@@ -115,5 +120,5 @@ void readFileFromDiskByBlock(const string &fileName, int blockNum, int blockSize
 
 unsigned short getNumOfBlocksFromHardDiskFile(const std::string &filename, int blockSize = 200);
 
-
+void insertDataBase(string record_str, string databaseFileName="database_file.txt", string btreeFileName="linked_hashtable.txt");
 #endif //QUESTION2_HASHTABLEBLOCK_H

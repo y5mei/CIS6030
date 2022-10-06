@@ -17,8 +17,29 @@
 
 using namespace std;
 
+void readDataFromDatabaseFileViaLocationString(string location) {
+
+    StingShort value = StingShort(location);
+    string blockContent = readFileFromDiskByBlockReturnString("database_file.txt", value.block, 1024);
+    BlockListNode bl = BlockListNode(blockContent);
+    Record r = Record(bl.getRecordAsString(value.record));
+    int numRecords = bl.getNumOfRecord();
+    cout << ">> Record found at database file block #"<< value.block<<" with " << bl.getEmptyBytes() << "/1024 empty Bytes, and "
+         << to_string(numRecords) << " keys: ";
+    Record rrr;
+    for (int i = 1; i <= numRecords; ++i) {
+        string s = bl.getRecordAsString(i);
+        Record rr = Record(s);
+        cout << rr.field1 << " ";
+        if (i==value.record){
+            rrr = rr;
+        }
+    }
+    cout<<'\n'<<rrr<<endl;
+}
+
 // read a file and get vector of sorted records
-vector<Record> readRawTxtFile(const string& fileName) {
+vector<Record> readRawTxtFile(const string &fileName) {
     string inputText;
     // Read from the text file
     ifstream MyReadFile(fileName);
@@ -33,7 +54,7 @@ vector<Record> readRawTxtFile(const string& fileName) {
 }
 
 
-void readRawFile(const string& fileName) {
+void readRawFile(const string &fileName) {
     cout << "\n>> Input Path is: " << fileName << endl;
     vector<Record> records = readRawTxtFile(fileName);
     cout << ">> Reading data file from " << fileName << ", found " << records.size() << " records." << endl;
@@ -56,8 +77,9 @@ void readRawFile(const string& fileName) {
     cout << "==== The input txt file is saved on disk as a database file: database_file.txt ======" << endl;
     //2.1) Build a B+Tree in RAM,
     b = dummyHead;
-    vector<string> block_record; // the ptr values saved on BTree leaf nodes
     vector<string> field_1s; // the keys saved on BTree leaf nodes;
+    vector<string> block_record; // the ptr values saved on BTree leaf nodes
+
 
     short block_cnt = 0;
     while (b != nullptr) {
@@ -74,17 +96,22 @@ void readRawFile(const string& fileName) {
         }
         b = b->next;
     }
-
     cout << "==== totally " << records.size() << " records are saved on " << block_cnt
          << " blocks. ================================" << endl;
-    cout<<"=====================================================================================\n";
+    cout << "=====================================================================================\n";
     // save this two vectors in a BTree in Ram:
     HashTable ht = HashTable();
-    for(Record r: records){
-        ht.insert(r.field1, r.content, getHashmapKey);
+    int limit = field_1s.size();
+    for (int i = 0; i < limit; ++i) {
+        ht.insert(field_1s.at(i), block_record.at(i), getHashmapKey);
     }
-    cout<<ht<<endl;
     ht.saveToDisk();
-    cout<<"================== The first part (saving) of A1Q2 is finished ======================\n";
-    cout<<"=====================================================================================\n";
+    cout << ht << endl;
+    cout << "=====================================================================================\n";
+    cout << "================== The first part (saving) of A1Q2 is finished ======================\n";
+    cout << "=====================================================================================\n";
+
+//    for(auto r: records){
+//        ht.search(r.field1, getHashmapKey);
+//    }
 }
