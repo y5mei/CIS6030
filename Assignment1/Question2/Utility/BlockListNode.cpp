@@ -59,11 +59,13 @@ BlockListNode *BlockListNode::insertRecordStringToBlock(string str) {
     // need to create a new block, and link to it.
 
     // We do not handle the case where the input record is longer than the size of a block;
-    if (ACTUAL_SIZE < (str.size() + 2)) {
+
+    int limit1 = str.size() + 2;
+    if (ACTUAL_SIZE < limit1) {
         throw invalid_argument("not enough empty space to hold new str, need to create a linked list");
     }
     // if the size of the input record is larger than the available empty bytes, we need to create a new node, and link the new node as next of the prev node
-    if (getEmptyBytes() < (str.size() + 2)) {
+    if (getEmptyBytes() < limit1) {
         BlockListNode *nextNode = generateNextNode(str);
         return nextNode;
     }
@@ -147,7 +149,8 @@ void BlockListNode::saveToDisk(BlockListNode *head, std::string filename) {
     BlockListNode *dummy = head;
     while (dummy != nullptr) {
         // get only the subslice of the actual size
-        for (int i = 0; i < sizeof(content); ++i) {
+        int limit2 = sizeof(content);
+        for (int i = 0; i < limit2; ++i) {
             content[i] = dummy->block[i];
         }
         FileToWrite.write((char *) content, sizeof(content));
@@ -189,7 +192,8 @@ BlockListNode::BlockListNode(std::string blockContent) {
 }
 
 void BlockListNode::setBlock(string s) {
-    if (s.size() != ACTUAL_SIZE) {
+    int limit = s.size();
+    if ( limit != ACTUAL_SIZE) {
         throw invalid_argument("Input string size is not matching than the size of the current block");
     } else {
         for (int i = 0; i < ACTUAL_SIZE; ++i) {

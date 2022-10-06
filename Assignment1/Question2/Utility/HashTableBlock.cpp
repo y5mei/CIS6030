@@ -139,7 +139,6 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     string key = inputRecord.field1;
     int size = getNumOfBlocksFromHardDiskFile(databaseFileName, 1024);
     unsigned short newBlockNum = size + 1;
-    unsigned short newRecordNum = 1;
     BlockListNode newblock = BlockListNode(1024);
     newblock.insertRecordStringToBlock(record_str);
     char *newContent = newblock.block;
@@ -303,7 +302,8 @@ void HashTable::saveToDisk(const string &fileName) {
             memcpy(recordBuff, &numRecords, 2);
             memcpy(recordBuff + 2, &nextOverflow, 2);
             int idx = 4;
-            for (int k = 0; k < currBucket.records.size(); ++k) {
+            int recordSize = currBucket.records.size();
+            for (int k = 0; k < recordSize; ++k) {
                 tuple<std::string, std::string> r = currBucket.records.at(k);
                 string field1 = get<0>(r);
                 string location = get<1>(r);
@@ -459,7 +459,8 @@ std::string HashTableFromDisk::searchForKeyWithHashedKey(const string &key, unsi
     cout << endl;
     cout << "=====================================================================================" << endl;
     // see if we really have this key:
-    for (int k = 0; k < field1s.size(); ++k) {
+    int limit = field1s.size();
+    for (int k = 0; k < limit; ++k) {
         if (field1s.at(k) == key) {
             cout << " After " << diskReadCount + 1
                  << " times disk reads (1 time Hashtable file header read, 1 time database file read + "
@@ -507,7 +508,8 @@ std::string HashTableFromDisk::searchForKeyWithHashedKey(const string &key, unsi
         }
         cout << endl;
         cout << "=====================================================================================" << endl;
-        for (int k = 0; k < field1s.size(); ++k) {
+        int fieldSize = field1s.size();
+        for (int k = 0; k < fieldSize; ++k) {
             if (field1s.at(k) == key) {
                 cout << " After " << diskReadCount + 1
                      << " times disk reads (1 time Hashtable file header read, 1 time database file read + "
@@ -580,7 +582,8 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
     cout << endl;
     cout << "=====================================================================================" << endl;
     // see if we really have this key:
-    for (int k = 0; k < field1s.size(); ++k) {
+    int fieldSize =  field1s.size();
+    for (int k = 0; k < fieldSize; ++k) {
         if (field1s.at(k) == key) {
             cout << " After " << diskReadCount + 1
                  << " times disk reads (1 time Hashtable file header read, 1 time database file read + "
@@ -628,7 +631,8 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
         }
         cout << endl;
         cout << "=====================================================================================" << endl;
-        for (int k = 0; k < field1s.size(); ++k) {
+        int fieldSizeLimit = field1s.size();
+        for (int k = 0; k < fieldSizeLimit; ++k) {
             if (field1s.at(k) == key) {
                 cout << " After " << diskReadCount + 1
                      << " times disk reads (1 time Hashtable file header read, 1 time database file read + "
