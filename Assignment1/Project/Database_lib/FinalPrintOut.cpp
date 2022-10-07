@@ -748,6 +748,14 @@ void rangeSearch(string key1, string key2, std::string databaseFileName, std::st
     searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
 }
 
+void rangeSearchWithIdx(int idx1, int idx2, std::string databaseFileName, std::string btreeFileName) {
+    // get the two keys
+    // TODO: Loop through the leaf node to get the keys of these two index
+    string key1;
+    string key2;
+    searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
+}
+
 // assignment q1 part 2-1
 string searchDataBaseWithOutPrint(string key, string keyEnd, string databaseFileName, string btreeFileName) {
 
