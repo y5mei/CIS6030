@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <algorithm>    // std::max
 #include <tuple> // Required for std::tuple
 #include "BytesOperation.h"
@@ -87,15 +88,24 @@ public:
     explicit HashTableFromDisk(const string &fileName = "linked_hashtable.txt");
 
     std::string searchForKey(const string &key, unsigned short (*fhash)(const std::string &hashkey, short hashi),
-                      const string &fileName = "linked_hashtable.txt");
-    static std::string searchForKeyWithHashedKey(const string &key, unsigned short hashedKey, unsigned short (*fhash)(const std::string &hashkey, short hashi),
-                             const string &fileName = "linked_hashtable.txt",int diskReadCnter = 0 );
+                             const string &fileName = "linked_hashtable.txt");
 
-    void insert(const std::string &key, std::string value, unsigned short (*fhash)(const std::string &key, short i), const string &fileName = "linked_hashtable.txt");
+    static std::string searchForKeyWithHashedKey(const string &key, unsigned short hashedKey,
+                                                 unsigned short (*fhash)(const std::string &hashkey, short hashi),
+                                                 const string &fileName = "linked_hashtable.txt",
+                                                 int diskReadCnter = 0);
 
-    void writeVectorOfValuesToBuckets(vector<string>* vec, unsigned short bucketNumStartWritting, const string &fileName = "linked_hashtable.txt");
+    void insert(const std::string &key, std::string value, unsigned short (*fhash)(const std::string &key, short i),
+                const string &fileName = "linked_hashtable.txt");
 
-    void insertToDiskBlock(const std::string &key, const std::string& value, unsigned short baseOneIndexToRead, const string &fileName = "linked_hashtable.txt");
+    // start from a known existing block in a fileName, writes all the vec content into the block, if the block is full, try to write to its overflow buckets, if there is no overflow buckets,
+    // this method will create overflow buckets for it, and update the HashTable header block;
+    void writeVectorOfValuesToBuckets(vector<string> *vec, unsigned short bucketNumStartWritting,
+                                      const string &fileName = "linked_hashtable.txt");
+
+    void insertToDiskBlock(const std::string &key, const std::string &value, unsigned short baseOneIndexToRead,
+                           const string &fileName = "linked_hashtable.txt");
+
     friend ostream &operator<<(ostream &os, HashTableFromDisk const &ht) {
         string s;
         s.append("=====================================================================================\n");
@@ -122,5 +132,94 @@ void readFileFromDiskByBlock(const string &fileName, int blockNum, int blockSize
 
 unsigned short getNumOfBlocksFromHardDiskFile(const std::string &filename, int blockSize = 200);
 
-void insertDataBase(string record_str, string databaseFileName="database_file.txt", string btreeFileName="linked_hashtable.txt");
+void insertDataBase(string record_str, string databaseFileName = "database_file.txt",
+                    string btreeFileName = "linked_hashtable.txt");
+
+// A thin wrapper of a block of hashtable object presented as char[200] in RAM;
+class HashTableBucketInRam {
+public:
+    char *content;
+    unsigned short numRecords;
+    unsigned short overFlowBlock;
+
+    HashTableBucketInRam(char *buffer) {
+        content = buffer;
+        this->numRecords = *(unsigned short *) &buffer[0];
+        this->overFlowBlock = *(unsigned short *) &buffer[2];
+    }
+
+    HashTableBucketInRam(char *buffer, unsigned short blockNumGetDirectFromHash) {
+        readFileFromDiskByBlock("linked_hashtable.txt", blockNumGetDirectFromHash + 2, 200, buffer);
+        content = buffer;
+        this->numRecords = *(unsigned short *) &buffer[0];
+        this->overFlowBlock = *(unsigned short *) &buffer[2];
+    }
+
+    // one based idx to get a record out as string, this string is actually 14 char long, need to get rid of the last char later;
+    string getRecord(int i) {
+//        if(i > numRecords) return "Record index overflow";
+        int idx = 4 + (i - 1) * 13;
+        char result[13];
+        memcpy(result, content + idx, sizeof(result) / sizeof(result[0]));
+        string r = result;
+//        r.pop_back(); // remove the \0 at the end
+        return r;
+    }
+
+    void setNumRecords(unsigned short newNum) {
+        this->numRecords = newNum;
+        memcpy(content, &numRecords, 2);
+    }
+
+    void setOverFlowBlock(unsigned short newOverflow) {
+        this->overFlowBlock = newOverflow;
+        memcpy(content + 2, &overFlowBlock, 2);
+    }
+
+    void printAllRecords() {
+        for (unsigned short i = 1; i <= numRecords; ++i) {
+            cout << getRecord(i) << endl;
+        }
+    }
+
+    void insertRecordAtIdx(unsigned short idx, string str) {
+        int cursor = 4 + (idx - 1) * 13;
+        for (int i = 0; i < 13; ++i) {
+            content[cursor + i] = str[i];
+        }
+    }
+
+    void insert(string str) {
+        if (numRecords == 10) {
+            throw invalid_argument(
+                    "Error: This bucket is currently full already. Cannot insert any more records into it.");
+        }
+        unsigned short newRecordIdx = numRecords + 1;
+        setNumRecords(newRecordIdx);
+        insertRecordAtIdx(newRecordIdx, str);
+    }
+
+    vector<string> getAllRecordsIncludingOverFlowBuckets(){
+        vector<string> allRecords;
+        for (unsigned short i = 1; i <= numRecords; ++i) {
+            allRecords.push_back(getRecord(i));
+        }
+        unsigned short next = overFlowBlock;
+        // recursively visit all the overflow blocks, and collect all the records.
+        while(next!=0){
+            char nextBlock[200];
+            HashTableBucketInRam nextBucketObj = HashTableBucketInRam(nextBlock, overFlowBlock);
+            cout<<"Visiting overflowblock #: "<<overFlowBlock<<endl;
+            next = nextBucketObj.overFlowBlock;
+            for(unsigned short j = 1; j<=nextBucketObj.numRecords; ++j){
+                allRecords.push_back(nextBucketObj.getRecord(j));
+            }
+        }
+        return allRecords;
+    }
+
+
+};
+
+
 #endif //QUESTION2_HASHTABLEBLOCK_H

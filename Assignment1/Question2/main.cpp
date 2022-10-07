@@ -45,6 +45,18 @@ void printHelpInfo() {
 
 int main() {
 
+//    char str[200];
+////    readFileFromDiskByBlock("linked_hashtable.txt", 2446 + 2, 200, str);
+//    HashTableBucketInRam htr = HashTableBucketInRam(str, 2446);
+//    htr.insert("aaabbbcccddee");
+//    htr.printAllRecords();
+//    cout<<"==================="<<endl;
+//    auto lala = htr.getAllRecordsIncludingOverFlowBuckets();
+//    for(auto s: lala){
+//        cout<<s<<endl;
+//    }
+//    return 0;
+
     cout<<"This is a test for bytes"<<endl;
     cout << "Welcome to CIS6030 Assignment-1 Question-2 (Linear Hashmap)" << endl;\
     bool isQuit = false;

@@ -105,8 +105,7 @@ void readFileFromDiskByBlock(const string &fileName, int blockNum, int blockSize
     fin.close();
 }
 
-long GetFileSize(std::string filename)
-{
+long GetFileSize(std::string filename) {
     struct stat stat_buf;
     int rc = stat(filename.c_str(), &stat_buf);
     return rc == 0 ? stat_buf.st_size : -1;
@@ -115,7 +114,7 @@ long GetFileSize(std::string filename)
 unsigned short getNumOfBlocksFromHardDiskFile(const std::string &filename, int blockSize) {
 
     long totalSize = GetFileSize(filename);
-    unsigned short result = totalSize/blockSize;
+    unsigned short result = totalSize / blockSize;
     return result;
 //    ifstream fin(filename);
 //    char buffer[blockSize];
@@ -146,10 +145,10 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     cout << " The new record for " << key << " has been inserted into Block# " << newBlockNum
          << " and Record# 1 in the database file." << endl;
     //====================== Step-2 ===========================================
-    cout<<"Inserting the key-value pair to the hashamp......"<<endl;
+    cout << "Inserting the key-value pair to the hashamp......" << endl;
     HashTableFromDisk htDisk = HashTableFromDisk();
     string value = StingShort(newBlockNum, 1).str;
-    htDisk.insert(key, value,getHashmapKey);
+    htDisk.insert(key, value, getHashmapKey);
 
 }
 
@@ -341,8 +340,8 @@ void HashTable::saveToDisk(const string &fileName) {
 
             // write the rest to overflow bucket
             while (numOfOverflowBuckets > 0) {
-//                cout << get<0>(currBucket.records.at(numRecordsToWrite - 1))
-//                     << " is on the overflow bucket at bucket number " << (overflowsize - 1) << endl;
+                cout << get<0>(currBucket.records.at(numRecordsToWrite - 1))
+                     << " is on the overflow bucket at bucket number " << (overflowsize - 1) << endl;
                 char overflowRecordBuff[200] = {'\0'};
                 numRecords = min(10, numRecordsToWrite); // todo: Is this a safe way to cast double to ushort?
                 if (numRecordsToWrite > 10) {
@@ -582,7 +581,7 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
     cout << endl;
     cout << "=====================================================================================" << endl;
     // see if we really have this key:
-    int fieldSize =  field1s.size();
+    int fieldSize = field1s.size();
     for (int k = 0; k < fieldSize; ++k) {
         if (field1s.at(k) == key) {
             cout << " After " << diskReadCount + 1
@@ -594,17 +593,18 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
     }
     // TODO: if there is an overflow block, we need to check the overflow bucket with a while loop, if still nothing, return a -1;
 
+    cout << "Read overflow bucket now: " << overflowBucketPosition << endl;
     while (overflowBucketPosition != 0) {
         diskReadCount++;
         // keep checking overflow buckets:
         char overflowBuffer[200];
-        readFileFromDiskByBlock(fileName, overflowBucketPosition, 200, buffer);
+        readFileFromDiskByBlock(fileName, overflowBucketPosition, 200, overflowBuffer);
         numRecords = *(unsigned short *) &overflowBuffer[0];
-        overflowBucketPosition = *(unsigned short *) &overflowBuffer[2];
+        unsigned short nextOverflowBucketPosition = *(unsigned short *) &overflowBuffer[2];
         cout << ">> Read Disk at OVERFLOW BlockNum: " << overflowBucketPosition << " found that: there are "
              << to_string(numRecords) << " records in this over flow block ";
-        if (overflowBucketPosition != 0) {
-            cout << "and this bucket has an overflow bucket at block number " << overflowBucketPosition;
+        if (nextOverflowBucketPosition != 0) {
+            cout << "and this bucket has an overflow bucket at block number " << nextOverflowBucketPosition;
         }
         cout << "." << endl;
         field1s.clear();
@@ -614,10 +614,10 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
             string f;
             string v;
             for (int i = start; i < start + 9; i++) {
-                f += buffer[i];
+                f += overflowBuffer[i];
             }
             for (int j = start + 9; j < start + 13; ++j) {
-                v += buffer[j];
+                v += overflowBuffer[j];
             }
             field1s.push_back(f);
             values.push_back(v);
@@ -641,6 +641,7 @@ HashTableFromDisk::searchForKey(const string &key, unsigned short (*fhash)(const
                 return values.at(k);
             }
         }
+        overflowBucketPosition = nextOverflowBucketPosition;
     }
     // calculate the non-split parent
     result = this->searchForKeyWithHashedKey(key, origionalBucketKey,
@@ -667,15 +668,15 @@ HashTableFromDisk::insert(const string &key, std::string value, unsigned short (
     }
     // HashMapBucket b1 = char[200] at actualBucketKey place;
     // insert the record str into it (if not over limit of 10, just insert it, otherwise, insert it to overflow place)
-    insertToDiskBlock(key, value, actualBucketKey+2, fileName);
+    insertToDiskBlock(key, value, actualBucketKey + 2, fileName);
     r++;
 
-    cout<<"==========================================="<<endl;
-    cout<<"==========================================="<<endl;
-    cout<<" The new key has been inserted "<<endl;
-    cout<<"==========================================="<<endl;
-    cout<<"==========================================="<<endl;
-    cout<<"==========================================="<<endl;
+    cout << "===========================================" << endl;
+    cout << "===========================================" << endl;
+    cout << " The new key has been inserted " << endl;
+    cout << "===========================================" << endl;
+    cout << "===========================================" << endl;
+    cout << "===========================================" << endl;
     double currThreshold = (r + 0.0) / (n + 0.0);
     if (currThreshold > threshold) {
 //        cout << " the threshold is overflow, need to create new bucket" << endl;
@@ -718,7 +719,9 @@ HashTableFromDisk::insert(const string &key, std::string value, unsigned short (
     }
 }
 
-void HashTableFromDisk::insertToDiskBlock(const string &key, const std::string& value, unsigned short baseOneIndexToRead, const string &fileName) {
+void
+HashTableFromDisk::insertToDiskBlock(const string &key, const std::string &value, unsigned short baseOneIndexToRead,
+                                     const string &fileName) {
 
     char buffer[200];
     readFileFromDiskByBlock(fileName, baseOneIndexToRead, 200, buffer);
@@ -732,19 +735,29 @@ void HashTableFromDisk::insertToDiskBlock(const string &key, const std::string& 
         memcpy(buffer + idxToInsert, key.c_str(), 9);
         memcpy(buffer + idxToInsert + 9, value.c_str(), 4);
         // write it back to baseOneIndexToRead
-        return writefileToDiskByBlock(fileName, baseOneIndexToRead, 200, buffer); // the only way to get out of this loop
+        return writefileToDiskByBlock(fileName, baseOneIndexToRead, 200,
+                                      buffer); // the only way to get out of this loop
 
     } else if (numOfRecord >= 10 and posOfOverFlowBucket != 0) {
         // if it has an overflow bucket, and currtly is full, insert into it;
         return insertToDiskBlock(key, value, posOfOverFlowBucket, fileName);
-    }else{
+    } else {
         // if there is no overflow bucket setted, but it is already full now, set the overflow bucket first;
-        memcpy(buffer+2, &this->overflowShift, 2);
+        memcpy(buffer + 2, &this->overflowShift, 2);
         overflowShift++;
         // write it back to baseOneIndexToRead and recursivly call
         writefileToDiskByBlock(fileName, baseOneIndexToRead, 200, buffer);
-        return insertToDiskBlock(key, value, overflowShift-1, fileName);
+        return insertToDiskBlock(key, value, overflowShift - 1, fileName);
     }
+
+}
+
+// start from a known existing block in a fileName, writes all the vec content into the block, if the block is full, try to write to its overflow buckets, if there is no overflow buckets,
+// this method will create overflow buckets for it, and update the HashTable header block;
+void HashTableFromDisk::writeVectorOfValuesToBuckets(vector<string> *vec, unsigned short bucketNumStartWritting,
+                                                     const string &fileName) {
+
+    // get the content of a block into RAM
 
 }
 
