@@ -847,7 +847,8 @@ HashTableFromDisk::insert(const string &key, std::string value, unsigned short (
             writeEmptyBucketToHardDisk(whereToSaveThisBlock + 1);
         }
 
-        for (int i = 0; i < leftover.size(); ++i) {
+        int limit1 = leftover.size();
+        for (int i = 0; i < limit1; ++i) {
             if (htir.getNumRecords() < 10) {
                 htir.insert(leftover.at(i));
             } else {
@@ -870,7 +871,8 @@ HashTableFromDisk::insert(const string &key, std::string value, unsigned short (
         htir.setNumRecords(0);
         nextBlockToWrite = htir.getOverFlowBlock();
         whereToSaveThisBlock = n - 1;
-        for (int i = 0; i < newbucket.size(); ++i) {
+        int limit2 = newbucket.size();
+        for (int i = 0; i < limit2; ++i) {
             if (htir.getNumRecords() < 10) {
                 htir.insert(newbucket.at(i));
             } else {
