@@ -24,13 +24,13 @@ void readDataFromDatabaseFileViaLocationString(string location) {
     BlockListNode bl = BlockListNode(blockContent);
     Record r = Record(bl.getRecordAsString(value.record));
     int numRecords = bl.getNumOfRecord();
-    cout << ">> Record found at database file block #"<< value.block<<" with " << bl.getEmptyBytes() << "/1024 empty Bytes, and "
-         << to_string(numRecords) << " keys: ";
+//    cout << ">> Record found at database file block #"<< value.block<<" with " << bl.getEmptyBytes() << "/1024 empty Bytes, and "
+//         << to_string(numRecords) << " keys: ";
     Record rrr;
     for (int i = 1; i <= numRecords; ++i) {
         string s = bl.getRecordAsString(i);
         Record rr = Record(s);
-        cout << rr.field1 << " ";
+//        cout << rr.field1 << " ";
         if (i==value.record){
             rrr = rr;
         }

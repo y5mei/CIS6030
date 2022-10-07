@@ -16,19 +16,41 @@ void buildDatabaseFileAndHashTableOnDisk(){
     vector<Record> records = readRawTxtFile();
 }
 
+void generateSomeRandomRecordsAndInsert(){
+    vector<Record> records = readRawTxtFile();
+    for (int i = 0; i < 100; ++i) {
+        string newContent = records.at(i).content;
+        newContent[0] = '1';
+        Record newRecord = Record(newContent);
+        cout<<newRecord.field1<<endl;
+        insertDataBase(newRecord.content);
+    }
+    HashTableFromDisk htDisk = HashTableFromDisk();
+    for (int i = 0; i < 100; ++i) {
+        string newContent = records.at(i).content;
+        newContent[0] = '1';
+        Record r = Record(newContent);
+        string location = htDisk.searchForKeyWithoutPrint(r.field1, getHashmapKey,"linked_hashtable.txt");
+        if(location=="-1"){
+            cout<<r.field1<<" can not be found" <<endl;
+            return;
+        }
+    }
+    cout<<"All the records are found...!"<<endl;
+}
 
-
-//int main() {
-//    // read all the records and save to database file;
-//    std::cout << "Hello, World!" << std::endl;
-//    readRawFile(); // read raw file and save two files on disk
-//
-//    // try to read it back?
-//
-//    HashTableFromDisk htDisk = HashTableFromDisk();
-//    cout<<htDisk<<endl;
-//    htDisk.searchForKey("shyziyotr", getHashmapKey);
-//}
+void testSearchAfterInsert(){
+    vector<Record> records = readRawTxtFile();
+    HashTableFromDisk htDisk = HashTableFromDisk();
+    for(auto r: records){
+        string location = htDisk.searchForKeyWithoutPrint(r.field1, getHashmapKey,"linked_hashtable.txt");
+        if(location=="-1"){
+            cout<<r.field1<<" can not be found" <<endl;
+            return;
+        }
+    }
+    cout<<"All the records are found...!"<<endl;
+}
 
 void printHelpInfo() {
     string s = "";
@@ -44,17 +66,9 @@ void printHelpInfo() {
 }
 
 int main() {
-
-//    char str[200];
-////    readFileFromDiskByBlock("linked_hashtable.txt", 2446 + 2, 200, str);
-//    HashTableBucketInRam htr = HashTableBucketInRam(str, 2446);
-//    htr.insert("aaabbbcccddee");
-//    htr.printAllRecords();
-//    cout<<"==================="<<endl;
-//    auto lala = htr.getAllRecordsIncludingOverFlowBuckets();
-//    for(auto s: lala){
-//        cout<<s<<endl;
-//    }
+// Uncomment here to test with all the records and insert 100 new records
+//    generateSomeRandomRecordsAndInsert();
+//    testSearchAfterInsert();
 //    return 0;
 
     cout<<"This is a test for bytes"<<endl;
@@ -112,6 +126,8 @@ int main() {
 //                cout << htDisk << endl;
                 string location = htDisk.searchForKey(searchKey, getHashmapKey,"linked_hashtable.txt");
                 if(location != "-1"){
+                    StingShort ss = StingShort(location);
+                    cout<<"Database file block number: "<<ss.block<<" and record number: "<<ss.record<<endl;
                     readDataFromDatabaseFileViaLocationString(location);
                 }
 
@@ -134,6 +150,7 @@ int main() {
             getline(cin>>ws, record);
             try {
                 insertDataBase(record);
+                cout << ">> Insert successful." << endl;
             } catch (invalid_argument const &e) {
                 cout<<"Error: Insert FAIL, please read the error message below:"<<endl;
                 cout << e.what() << endl;

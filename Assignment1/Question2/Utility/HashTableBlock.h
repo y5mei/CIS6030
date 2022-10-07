@@ -85,7 +85,10 @@ public:
     double threshold = 5; // on average, 5 records per bucket, actually, max is 17, min is one, hash is not very uniform with mod 60K prime;
     unsigned short overflowShift;
 
-    explicit HashTableFromDisk(const string &fileName = "linked_hashtable.txt");
+    explicit HashTableFromDisk(const string &fileName = "linked_hashtable.txt", bool isPrint = true);
+
+    std::string searchForKeyWithoutPrint(const string &key, unsigned short (*fhash)(const std::string &hashkey, short hashi),
+                             const string &fileName = "linked_hashtable.txt");
 
     std::string searchForKey(const string &key, unsigned short (*fhash)(const std::string &hashkey, short hashi),
                              const string &fileName = "linked_hashtable.txt");
@@ -103,6 +106,9 @@ public:
     void writeVectorOfValuesToBuckets(vector<string> *vec, unsigned short bucketNumStartWritting,
                                       const string &fileName = "linked_hashtable.txt");
 
+    // set the first block of the database file to be the input numbers.
+    void updateFileHeaderValues(unsigned short ii, unsigned short nn, unsigned short rr, unsigned short overflow, const string &fileName = "linked_hashtable.txt");
+    void writeEmptyBucketToHardDisk(unsigned short bucketNumToWrite, const string &fileName = "linked_hashtable.txt");
     void insertToDiskBlock(const std::string &key, const std::string &value, unsigned short baseOneIndexToRead,
                            const string &fileName = "linked_hashtable.txt");
 
@@ -118,7 +124,7 @@ public:
         s.append("r value (number of records) is : ");
         s.append(to_string(ht.r) + '\n');
         s.append("last overflow bucket should be inserted to block# : ");
-        s.append(to_string(ht.overflowShift) + '\n');
+        s.append(to_string(ht.overflowShift));
         return os << s;
     }
 
@@ -159,10 +165,13 @@ public:
     string getRecord(int i) {
 //        if(i > numRecords) return "Record index overflow";
         int idx = 4 + (i - 1) * 13;
-        char result[13];
-        memcpy(result, content + idx, sizeof(result) / sizeof(result[0]));
-        string r = result;
-//        r.pop_back(); // remove the \0 at the end
+//        char result[13];
+//        memcpy(result, content + idx, sizeof(result) / sizeof(result[0]));
+//        string r = result;
+        string r;
+        for(int i = 0; i<14; ++i){
+            r = r+content[i+idx];
+        }
         return r;
     }
 
@@ -171,9 +180,17 @@ public:
         memcpy(content, &numRecords, 2);
     }
 
+    unsigned short getNumRecords(){
+        return *(unsigned short *) &content[0];
+    }
+
     void setOverFlowBlock(unsigned short newOverflow) {
         this->overFlowBlock = newOverflow;
         memcpy(content + 2, &overFlowBlock, 2);
+    }
+
+    unsigned short getOverFlowBlock(){
+        return *(unsigned short *) &content[2];
     }
 
     void printAllRecords() {
@@ -208,7 +225,7 @@ public:
         // recursively visit all the overflow blocks, and collect all the records.
         while(next!=0){
             char nextBlock[200];
-            HashTableBucketInRam nextBucketObj = HashTableBucketInRam(nextBlock, overFlowBlock);
+            HashTableBucketInRam nextBucketObj = HashTableBucketInRam(nextBlock, overFlowBlock-2);
             cout<<"Visiting overflowblock #: "<<overFlowBlock<<endl;
             next = nextBucketObj.overFlowBlock;
             for(unsigned short j = 1; j<=nextBucketObj.numRecords; ++j){
@@ -217,8 +234,6 @@ public:
         }
         return allRecords;
     }
-
-
 };
 
 
