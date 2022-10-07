@@ -1,4 +1,4 @@
-# Assignment2 Question2 (Linear Hashtable)
+# Assignment1 Question2 (Linear Hashtable)
 Yaowen Mei (1177855) Fall 2022
 ## Design
 There are totally 46882 records, these records are saved to a database file, _**database_file.txt**_, in blocks of 1024 bytes;
@@ -21,6 +21,8 @@ The linear hash table is designed as the following:
 5. After the program is running, you can use `h` to see the help, briefly, you can type `b` to build all the files that need to be saved on disk; `i` for insert, and `s` for search;
 6. Please note that, at the very beginning,  you must run `b` to generate the disk files before you can search and insert. You can run `b` whenever you want to reset the disk files (remove all the new records you manually inserted).
 7. Please do not insert any existing key twice, I didn't check and throw this as this is not required in this assignment.
+6. <font  color=red> AGAIN, YOU MUST RUN `b` FIRST (at least once) BEFORE YOU CAN INSERT AND SEARCH. The `b` command has default parameter for path of the input A1_data.txt file, you can just press enter for the build raw file path.</font>
+
 
 ## Briefly compare search performance:
 Under the scale of current input dataset, the disk read num for B+Tree is **8 times**: 
