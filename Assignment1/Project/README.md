@@ -23,3 +23,4 @@
 
 ## Unit Test:
 Google Test framework is used for unit test purpose [Link](https://www.jetbrains.com/help/clion/creating-google-test-run-debug-configuration-for-test.html#code-gen-menu)
+Unit test can be found and run by run the main method in `./Google_tests/TestMain.cpp` file.

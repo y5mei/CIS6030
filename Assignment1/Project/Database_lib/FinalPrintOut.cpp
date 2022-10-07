@@ -441,6 +441,32 @@ string searchDataBase(string key, string databaseFileName, string btreeFileName)
     }
 }
 
+BPlusTree<string>* readEntireBTreeInRAM(BPlusTree<string>* bPlusTree, const string& btreeFileName) {
+    //====================== Step-2 ===========================================
+    // build a vector of treenode
+    Node<string> curr = Node<string>();
+    int size = getNumOfBlocksFromHardDiskFile(btreeFileName, 512);
+    //Construct the Entire B+Tree
+    vector<Node<string> *> BTreeVector;
+    BTreeVector.push_back(nullptr); // 0 index is nullptr;
+    while (size > 0) {
+        BTreeVector.push_back(new Node<string>());
+        size--;
+    }
+    int limit = BTreeVector.size();
+    ifstream fin;
+    fin.open(btreeFileName);
+    for (int i = 1; i < limit; ++i) {
+        readFileFromDiskByBlockReturnArrayWithoutFileClose(fin, btreeFileName, &BTreeVector, i, 512);
+    }
+    fin.close();
+    // New a BTree Instance, replace the root node
+    auto *root = BTreeVector.at(1);
+
+    bPlusTree->root = root;
+    return bPlusTree;
+}
+
 // assignment q1 part 2-2
 void insertDataBase(string record_str, string databaseFileName, string btreeFileName) {
     // search a key
@@ -615,7 +641,6 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     cout<<">> All the field ones has been saved to file, field_one_file.txt, for verification purpose.\n";
 }
 
-
 string searchDataBaseWithoutPrintTerminal(string key, string databaseFileName, string btreeFileName) {
     if (key.size() != 9) {
         string error;
@@ -751,8 +776,26 @@ void rangeSearch(string key1, string key2, std::string databaseFileName, std::st
 void rangeSearchWithIdx(int idx1, int idx2, std::string databaseFileName, std::string btreeFileName) {
     // get the two keys
     // TODO: Loop through the leaf node to get the keys of these two index
-    string key1;
-    string key2;
+    // use 0 based idx
+
+    int smallIdx = min(idx1, idx2);
+    int bigIdx = max(idx1, idx2);
+    BPlusTree<string> bPlusTree = BPlusTree<string>(8);
+    readEntireBTreeInRAM(&bPlusTree, btreeFileName);
+    vector<string> vecKeys;
+    auto* node = bPlusTree.searchNode("aaaaaaaaa");
+    while((int)vecKeys.size()<= bigIdx && node != nullptr){
+        for(string k: node->keys){
+            vecKeys.push_back(k);
+        }
+        node = node->next;
+    }
+    if((int) vecKeys.size()<= bigIdx){
+        throw invalid_argument(" Error: Not enough data in the BPlusTree.");
+    }
+
+    string key1 = vecKeys.at(smallIdx);
+    string key2 = vecKeys.at(bigIdx);
     searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
 }
 

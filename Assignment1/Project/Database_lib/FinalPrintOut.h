@@ -24,6 +24,10 @@ void
 deleteDataBase(string key, std::string databaseFileName = "database_file.txt",
                std::string btreeFileName = "bTree_file.txt");
 
+BPlusTree<string>* readEntireBTreeInRAM(BPlusTree<string>* bPlusTree, const std::string& btreeFileName = "bTree_file.txt");
+void rangeSearchWithIdx(int idx1, int idx2, std::string databaseFileName = "database_file.txt",
+                        std::string btreeFileName = "bTree_file.txt");
+
 void rangeSearch(string key1, string key2, std::string databaseFileName = "database_file.txt",
                  std::string btreeFileName = "bTree_file.txt");
 

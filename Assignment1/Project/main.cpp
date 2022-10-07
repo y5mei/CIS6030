@@ -22,8 +22,11 @@ void printHelpInfo() {
     s += "    * for `i` insert, after press `i`, and enter, you will be promoted to input a string of a full record;\n";
     s += "        - the record you input must include field 1, field 2 and field 3. The field 1 must be diff than any existing keys.\n";
     s += "    * for `d` delete, after press `d`, and enter, you will be promoted to input a string of length 9 (field1);\n";
-    s += "    * for `r` range search, after press `r` and enter, you will be promoted to input 9 chars for the start key,\n"
+    s += "    * for `r` range search with Key Strings, after press `r` and enter, you will be promoted to input 9 chars for the start key,\n"
          "      then you will be promoted to input another 9 chars for the end key, all the records within this range will be displayed.";
+    s += "    * for `ri` range search via Index Num, after press `ri` and enter, you will be promoted to input a zero based int number"
+         "       for the start idx, then you will be promoted to input another zero based int number for the end idx, all the records "
+         "       within this range will be displayed.";
     cout << s << endl;
 }
 
@@ -40,10 +43,10 @@ int main() {
         cin.sync();
         getline(cin >>ws, command);
         cout<<"---------------- Running command:------------------------"<<endl;
-        if (command.length()!=1){
-            cout<<" Error: the input command must be length of ONE char, but \""<<command<<"\" was given!, try again!"<<endl;
-            continue;
-        }
+//        if (command.length()!=1){
+//            cout<<" Error: the input command must be length of ONE char, but \""<<command<<"\" was given!, try again!"<<endl;
+//            continue;
+//        }
         if (command == "q") {
             isQuit = true;
             continue;
@@ -96,6 +99,22 @@ int main() {
             cin >> searchKey2;
             try {
                 rangeSearch(searchKey1, searchKey2);
+            } catch (invalid_argument const &e) {
+                cout << e.what() << endl;
+            }
+            continue;
+        }
+        if (command == "ri") {
+            cout << "Please input the staring idx (int number) for the range you want to start the search:" << endl;
+            cout << "(Start Range index [0 indexed int number])>> ";
+            int searchKey1;
+            cin >> searchKey1;
+            cout << "Please input the ending keys (int number) for the range you want to end the search:" << endl;
+            cout << "(End Range Search Key [0 indexed int number])>> ";
+            int searchKey2;
+            cin >> searchKey2;
+            try {
+                rangeSearchWithIdx(searchKey1, searchKey2);
             } catch (invalid_argument const &e) {
                 cout << e.what() << endl;
             }
