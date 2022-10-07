@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <map>
 #include <unistd.h> // lseek
-#include "FinalPrintOut.h"
 #include "../BPlusTree_lib/BPlusTree.h"
+#include "FinalPrintOut.h"
 
 using namespace std;
 
@@ -24,6 +24,13 @@ double f2() {
 
     cout << " this is inside of another cpp file2" << endl;
     return 10000000000;
+}
+void saveVectorOfField1ToDisk(vector<std::string> *vec, std::string field_one_in_order)  {
+    ofstream FileToWrite(field_one_in_order, ofstream::trunc); // erase the content before write
+    for(string content: *vec){
+        FileToWrite<<content<<endl;
+    }
+    FileToWrite.close();
 }
 
 void deseralizeNodeFromStr(string str, vector<Node<string> *> *vec, int nodeNum) {
@@ -374,7 +381,7 @@ void readRawFile(string fileName) {
     // save the B+Tree into Disk
     saveBTreeNodesOnDisk(&bTree, "bTree_file.txt");
     cout << "==== The B+Tree file is generated on the hard disk with name:  bTree_file.txt  ======" << endl;
-    saveVectorOfField1ToDisk(&field_1s);
+    saveVectorOfField1ToDisk(&field_1s, "field_one_file.txt");
     cout << "==== All field ones are saved on the hard disk with name:  field_one_file.txt  ======" << endl;
     cout << "=====================      Program 1 Part 1 has finished        =====================" << endl;
 }
@@ -604,7 +611,7 @@ void insertDataBase(string record_str, string databaseFileName, string btreeFile
     saveBTreeNodesOnDisk(&bPlusTree, "bTree_file.txt");
     cout << ">> Insert Success, the record for " << inputRecord.field1 << " has been inserted to Block#: "
          << newBlockNum << " and Record#: " << newRecordNum << endl;
-    saveVectorOfField1ToDisk(&field_1s);
+    saveVectorOfField1ToDisk(&field_1s, "field_one_file.txt");
     cout<<">> All the field ones has been saved to file, field_one_file.txt, for verification purpose.\n";
 }
 
@@ -732,8 +739,13 @@ void deleteDataBase(string key, string databaseFileName, string btreeFileName) {
     }
     saveBTreeNodesOnDisk(&bPlusTree, "bTree_file.txt");
     cout << "Delete Record: " << key << " Successfully." << endl;
-    saveVectorOfField1ToDisk(&field_1s);
+    saveVectorOfField1ToDisk(&field_1s, "field_one_file.txt");
     cout<<">> All the field ones has been saved to file, field_one_file.txt, for verification purpose.\n";
+}
+
+void rangeSearch(string key1, string key2, std::string databaseFileName, std::string btreeFileName) {
+    // get the two keys
+    searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
 }
 
 // assignment q1 part 2-1
@@ -800,17 +812,5 @@ string searchDataBaseWithOutPrint(string key, string keyEnd, string databaseFile
 }
 
 
-void rangeSearch(string key1, string key2, std::string databaseFileName, std::string btreeFileName) {
-    // get the two keys
-    searchDataBaseWithOutPrint(key1, key2, databaseFileName,btreeFileName );
-}
-
-void saveVectorOfField1ToDisk(vector<std::string> *vec, std::string field_one_in_order)  {
-    ofstream FileToWrite(field_one_in_order, ofstream::trunc); // erase the content before write
-    for(string content: *vec){
-        FileToWrite<<content<<endl;
-    }
-    FileToWrite.close();
-}
 
 

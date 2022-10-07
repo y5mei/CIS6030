@@ -4,16 +4,16 @@
 #include <algorithm> // sort
 #include <bitset>
 #include <sstream>
-
-#include "FinalPrintOut.h"
 #include "BPlusTree.h"
+#include "FinalPrintOut.h"
+
 
 
 using namespace std;
 
 void printHelpInfo() {
     string s = "";
-    s += "\n============================ Help Information  =====================================\n";
+    s += "\n============================xxx Help Information  xxx=====================================\n";
     s += " This is the program for CIS6030 Assignment-1 Question-1\n";
     s += " 1. ) For part ONE of this question, Please type `b` to BUILD a database file and a b+tree file on the hard disk.\n";
     s += " You can re-run this build command many times as you want, and the new generated files will overwrite the old ones.\n";
@@ -29,7 +29,6 @@ void printHelpInfo() {
 
 int main() {
 
-    cout<<"This is a test for bytes"<<endl;
     cout << "Welcome to CIS6030 Assignment-1 Question-1 (B+Tree)" << endl;\
     bool isQuit = false;
     string command;

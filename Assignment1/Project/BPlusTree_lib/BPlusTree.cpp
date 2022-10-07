@@ -16,11 +16,13 @@ int BPlusTreeReturn(string input){
 }
 
 int getNodeNumFormVec(Node<string> *node, vector<Node<string>*> *vec){
-    for (int i = 0; i < vec->size(); ++i) {
+    int limit1 =  vec->size();
+    for (int i = 0; i <limit1; ++i) {
         if (vec->at(i)==node){
             return i;
         }
     }
+    throw invalid_argument("current node is not in the node vector!");
 }
 
 // this is a debug method, input a root node, and return the path how to find the key from the root
@@ -45,7 +47,8 @@ Node<string> *searchNodeWithDebugPrint(string k, Node<string> *node, vector<Node
             cout <<" ******* Going to Search Node: "<<getNodeNumFormVec(node->children.back(), vec)<<endl;
             return searchNodeWithDebugPrint(k, node->children.back(), vec);
         } else {
-            for (int i = 0; i < node->keys.size() - 1; ++i) {
+            int limit2 =  node->keys.size() - 1;
+            for (int i = 0; i <limit2;++i) {
                 auto ithKey = node->keys[i];
                 auto iPlusOneKey = node->keys[i + 1];
                 if (currKey >= ithKey && currKey < iPlusOneKey) {
@@ -68,7 +71,8 @@ void printNodeForDebug(int nodeNum, vector<Node<string>*> *vec){
 }
 
 void printAllKeysOfANode(Node<int>* node){
-    for (int i = 0; i < node->keys.size(); ++i) {
+    int limit3 = node->keys.size();
+    for (int i = 0; i < limit3; ++i) {
         cout<<node->keys[i]<<",";
     }
     cout<<"    | "<<endl;

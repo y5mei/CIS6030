@@ -16,7 +16,8 @@ template<class T>
 T Node<T>::search(T k) {
 
     Node<T> *leafNode = searchNode(k);
-    for (int i = 0; i < leafNode->keys.size(); ++i) {
+    int limit100 = leafNode->keys.size();
+    for (int i = 0; i < limit100; ++i) {
         if (leafNode->keys[i] == k) {
             return leafNode->values[i];
         }
@@ -152,7 +153,8 @@ void Node<T>::del(T k) {
     }
 
     short currKeyIdx = 0;
-    for (int i = 0; i < nodeN->keys.size(); ++i) {
+    int limit101 = nodeN->keys.size();
+    for (int i = 0; i < limit101; ++i) {
         if(nodeN->keys.at(i) == k){
             currKeyIdx = i;
             break;
@@ -162,7 +164,8 @@ void Node<T>::del(T k) {
     }
 
     // if the leaf node has enough keys to delete one, just delete it
-    if ((nodeN->keys.size()-1)>=nodeN->getMinKeyNUM()){
+    int limit102 = (nodeN->keys.size()-1);
+    if (limit102 >= nodeN->getMinKeyNUM()){
         if(currKeyIdx!=0){ // just del the key-value pair if they are not the 1st element;
             nodeN->keys.erase(nodeN->keys.begin()+ currKeyIdx);
             nodeN->values.erase(nodeN->values.begin()+currKeyIdx);
