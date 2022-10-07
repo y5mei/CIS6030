@@ -10,6 +10,8 @@ using namespace std;
 
 double f2();
 
+void displayAllRecords(std::string databaseFileName = "database_file.txt");
+
 void readRawFile(std::string fileName = "../A1_data.txt");
 
 // search a key from a BTree, and return and print the result;

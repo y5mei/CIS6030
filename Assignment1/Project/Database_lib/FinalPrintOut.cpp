@@ -467,6 +467,38 @@ BPlusTree<string>* readEntireBTreeInRAM(BPlusTree<string>* bPlusTree, const stri
     return bPlusTree;
 }
 
+void displayAllRecords(string databaseFileName) {
+    BlockListNode *b = new BlockListNode(readFileFromDiskByBlock("database_file.txt", 1, 1024));
+    BlockListNode *dummyHead = b;
+    BlockListNode *toDelete = b;
+    vector<Record> records;
+    int blockSize = getNumOfBlocksFromHardDiskFile("database_file.txt", 1024);
+    cout<<" >> Reading database file to RAM, please wait ..........."<<endl;
+    for (int j = 1; j < blockSize; ++j) {
+        string currBlock = readFileFromDiskByBlock("database_file.txt", j + 1, 1024);
+        b->next = new BlockListNode(currBlock);
+        b = b->next;
+    }
+    int cnt = 1;
+    while(dummyHead!= nullptr){
+        int size = dummyHead->getNumOfRecord();
+        for(int i = 1; i<=size; ++i){
+            string sr = dummyHead->getRecordAsString(i);
+            Record r = Record(sr);
+            cout<<"------------- Record#: "<<cnt++<<" ----------------"<<endl;
+            cout<<r<<endl;
+        }
+        dummyHead = dummyHead->next;
+    }
+    // delete all the block list nodes:
+    while(toDelete!= nullptr){
+        BlockListNode *temp = toDelete;
+        toDelete = toDelete->next;
+        delete temp;
+    }
+
+}
+
 // assignment q1 part 2-2
 void insertDataBase(string record_str, string databaseFileName, string btreeFileName) {
     // search a key
