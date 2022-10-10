@@ -1,0 +1,47 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'application'
+}
+
+group = 'org.example'
+//version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+jar{
+    manifest{
+        attributes 'Main-Class': 'MainKt'
+    }
+    // This line of code recursively collects and copies all of a project's files
+    // and adds them to the JAR itself. One can extend this task, to skip certain
+    // files or particular types at will
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
+    destinationDir = file("/usr/local/cellar/hadoop/3.3.4/libexec/")
+}
+
+dependencies {
+    implementation 'org.apache.hadoop:hadoop-common:3.3.4'
+    implementation 'org.apache.hadoop:hadoop-mapreduce-client-core:3.3.4'
+    implementation 'org.apache.hadoop:hadoop-mapreduce-client-jobclient:3.3.2'
+    implementation 'org.apache.hadoop:hadoop-mapreduce-client:3.3.2'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = '1.8'
+}
+
+application {
+    mainClassName = 'MainKt'
+}
