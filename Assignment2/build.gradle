@@ -10,17 +10,17 @@ repositories {
     mavenCentral()
 }
 
-jar{
-    manifest{
-        attributes 'Main-Class': 'MainKt'
-    }
-    // This line of code recursively collects and copies all of a project's files
-    // and adds them to the JAR itself. One can extend this task, to skip certain
-    // files or particular types at will
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
-    destinationDir = file("/usr/local/cellar/hadoop/3.3.4/libexec/")
-}
+//jar{
+//    manifest{
+//        attributes 'Main-Class': 'MainKt'
+//    }
+//    // This line of code recursively collects and copies all of a project's files
+//    // and adds them to the JAR itself. One can extend this task, to skip certain
+//    // files or particular types at will
+//    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+//    duplicatesStrategy(DuplicatesStrategy.INCLUDE)
+//    destinationDir = file("/usr/local/cellar/hadoop/3.3.4/libexec/")
+//}
 
 dependencies {
     implementation 'org.apache.hadoop:hadoop-common:3.3.4'

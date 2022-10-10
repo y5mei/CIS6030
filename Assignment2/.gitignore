@@ -4,3 +4,8 @@
 ../KtxTest/
 .gradle
 build
+../SimpleJava/.gradle/
+../SimpleJava/build.gradle
+../SimpleJava/build/
+../SimpleJava/settings.gradle
+../SimpleJava/src/
