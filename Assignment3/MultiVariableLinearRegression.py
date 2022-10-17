@@ -31,8 +31,8 @@ def get_dataframe_from_database():
     return df
 
 
-# use df and the user input record to predict the admission rate
-def train_model(df, newRecord):
+# train a model from a df, print out the detail of the model and return the model out
+def train_model_without_userinput(df):
     # there is no need to re-normalize the inputs for regression
     X = df.iloc[:, 1:8]
     y = df.iloc[:, 8:9]
@@ -41,10 +41,9 @@ def train_model(df, newRecord):
 
     regr = linear_model.LinearRegression()
     regr.fit(X_train, y_train)
-
     col_names = list(df.columns)
 
-    print("This is the result of the multiple variable linear regression: ")
+    print("Based on the training data (80% of the 500 records), I have found that: ")
     print("===============================================================")
     print('Intercept: ', regr.intercept_[0])
     for i, coef in enumerate(regr.coef_[0]):
@@ -58,7 +57,8 @@ def train_model(df, newRecord):
     error = mean_squared_error(y_test, y_prediction)
     print("R^2 score of the trained regression function is", score)
     print("Mean Squared Error is ", mean_squared_error(y_test, y_prediction))
-
+    print("===============================================================")
+    return regr
     # fig, ax = plt.subplots()
     # ax.scatter(y_test, y_prediction, edgecolors=(0, 0, 0))
     # ax.plot([y.min(), y.max()], [y.min(), y.max()], "k--", lw=4)
@@ -67,11 +67,29 @@ def train_model(df, newRecord):
     # ax.set_title('R2: ' + f'{score:.4f}' + "\n Mean Squared Error = " + f'{error:.4f}')
     # plt.show()
 
+
+# use df and the user input record to predict the admission rate
+
+def get_cal_names_for_user_input(df):
+    col_names = list(df.columns)
     col_names = col_names[1:-1]
+    return col_names
+
+
+def predict_a_new_student(regr, newRecord, col_names):
     df_new_record = pd.DataFrame(newRecord, col_names).T
     newPredict = regr.predict(df_new_record)
     print("===============================================================")
     print("The predicted chance of admission is: ", newPredict[0][0])
+    print("===============================================================")
+
+# def train_model(df, newRecord):
+#     col_names = list(df.columns)
+#     col_names = col_names[1:-1]
+#     df_new_record = pd.DataFrame(newRecord, col_names).T
+#     newPredict = regr.predict(df_new_record)
+#     print("===============================================================")
+#     print("The predicted chance of admission is: ", newPredict[0][0])
 
 
 # get user input for an unknown student as a list
@@ -97,13 +115,27 @@ def getUserInput():
         if not isConfirmed:
             print("Please re-inter the information of the student: ")
         else:
-            print("Input is confirmed, please wait while training the model...")
+            print("Input is confirmed, calculating the admission rate from the trained model now: ")
 
     return user_input
 
 
 if __name__ == "__main__":
-    user_input = getUserInput()
+    print(
+        "====================================================================================================")
+    print("Welcome to the \"Multivariable Linear Regression Section\", below is the detailed trained model (80% "
+          "training data and 20% testing data)")
     df = get_dataframe_from_database()
+    col_names = get_cal_names_for_user_input(df)
+    model = train_model_without_userinput(df)
+    isFinished = False
+    while not isFinished:
+        print("[Press p to make a new prediction, type q to quit]: ", end ="")
+        command = str(input())
+        if command == "q":
+            isFinished = True
+        else:
+            user_input = getUserInput()
+            predict_a_new_student(model, user_input, col_names)
     # user_input = [340, 120, 4, 4.5, 4.0, 9.92, 1]
-    train_model(df, user_input)
+    # train_model(df, user_input)

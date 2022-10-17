@@ -35,12 +35,17 @@ def get_dataframe_from_database():
     df = pd.DataFrame(all_records, columns=col_names)
     return df
 
+def get_cal_names_for_user_input(df):
+    col_names = list(df.columns)
+    col_names = col_names[1:-1]
+    return col_names
 
 # use df and the user input record to predict the admission rate
 def train_model(df):
     # there is no need to re-normalize the inputs for regression
     X = df.iloc[:, 1:8]
     y = df.iloc[:, 8:9]
+    col_names = get_cal_names_for_user_input(df)
 
     y["Chance_of_Admit_"] = y["Chance_of_Admit_"].apply(lambda x: True if x > 0.5 else False)
 
@@ -49,12 +54,12 @@ def train_model(df):
     # define the multinomial logistic regression model
     regr = LogisticRegression(random_state=12, solver='lbfgs', max_iter=1000).fit(X_train, y_train.values.ravel())
 
-    print("This is the result of the multiple variable Logistic Regression: ")
-    # print("===============================================================")
-    # print('Intercept: ', regr.intercept_[0])
-    # for i, coef in enumerate(regr.coef_[0]):
-    #     print(f'Coefficient for {col_names[1 + i]} : ', coef)
-    # print("===============================================================")
+    print("Based on the training data (80% of the 500 records), I have found that the model is: ")
+    print("===============================================================")
+    print('Intercept: ', regr.intercept_[0])
+    for i, coef in enumerate(regr.coef_[0]):
+        print(f'Coefficient for {col_names[i]} : ', coef)
+    print("===============================================================")
 
     print("Based on the testing data (20% of the 500 records), I have found that: ")
     y_prediction = regr.predict(X_test)
@@ -70,21 +75,13 @@ def train_model(df):
     print(t)
     return regr
 
-    # fig, ax = plt.subplots()
-    # ax.scatter(y_test, y_prediction, edgecolors=(0, 0, 0))
-    # ax.plot([y.min(), y.max()], [y.min(), y.max()], "k--", lw=4)
-    # ax.set_xlabel("Actual Prob of Admission ")
-    # ax.set_ylabel("Predicted Prob of Admission")
-    # ax.set_title('R2: ' + f'{score:.4f}' + "\n Mean Squared Error = " + f'{error:.4f}')
-    # plt.show()
-
 def make_prediction(df, regr, newRecord):
     col_names = list(df.columns)
     col_names = col_names[1:-1]
     df_new_record = pd.DataFrame(newRecord, col_names).T
     newPredict = regr.predict(df_new_record)
     print("===============================================================")
-    print("The predicted chance of admission is: ", newPredict[0])
+    print("The predicted admission result is: ", newPredict[0])
 
 # get user input for an unknown student as a list
 def getUserInput():
@@ -116,7 +113,21 @@ def getUserInput():
 
 if __name__ == "__main__":
     # user_input = getUserInput()
+    print(
+        "====================================================================================================")
+    print("Welcome to the \"Logistic Regression Section\", below is the detailed trained model (80% "
+          "training data and 20% testing data)")
     df = get_dataframe_from_database()
     model = train_model(df)
-    user_input = [340, 120, 4, 4.5, 4.0, 9.92, 1]
-    make_prediction(df, model, user_input)
+
+    isFinished = False
+    while not isFinished:
+        print("[Press p to make a new prediction, type q to quit]: ", end ="")
+        command = str(input())
+        if command == "q":
+            isFinished = True
+        else:
+            user_input = getUserInput()
+            make_prediction(df, model, user_input)
+    # user_input = [340, 120, 4, 4.5, 4.0, 9.92, 1]
+    # make_prediction(df, model, user_input)
