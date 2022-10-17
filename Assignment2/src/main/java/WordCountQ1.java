@@ -27,7 +27,7 @@ public class WordCountQ1 {
             StringTokenizer itr = new StringTokenizer(value.toString());
             while (itr.hasMoreTokens()) {
                 String currKey = itr.nextToken();
-                if (currKey.length()>=25){
+                if (currKey.length()>25){
                     word.set(currKey);
                     context.write(word, one);
                 }

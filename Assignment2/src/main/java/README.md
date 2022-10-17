@@ -39,29 +39,22 @@ kyhiddqsc if you wish to link to undergraduate calendar please
 
 ### To run the jars
 Run question-1 applications:
+
 ```
 $ bin/hadoop jar wcq1.jar WordCountQ1 /user/joe/wordcount/input/A1_data.txt /user/joe/wordcount/output/q1result
 ```
 
 Check the output for question 1:
+Note that this program is reporting string > 25 chars (strings length equals 25 are not included):
 ```
 $ bin/hadoop fs -cat /user/joe/wordcount/output/q1result/part-r-00000
 
-agriculturalcommunication	1
-agriculturalcommunications	1
-compassionateconsideration	1
-contemporaryenvironmental	1
-describingextracurricular	3
-environmentalperspectives	10
-extracurricularactivities	24
-extracurricularexperience	2
-extracurricularleadership	1
-internationalbaccalaureate	1
-interpersonalcommunication	2
-outstandingextracurricular	1
-participatedsignificantly	5
-psychologicalcompassionate	2
-universityextracurricular	6
+agriculturalcommunications  1
+compassionateconsideration  1
+internationalbaccalaureate  1
+interpersonalcommunication  2
+outstandingextracurricular  1
+psychologicalcompassionate  2
 ```
 
 Run question-2 applications:
