@@ -8,16 +8,12 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_predict
 from prettytable import PrettyTable
+from YourConstant import *
 
 
 # get data from database as pandas df
 def get_dataframe_from_database():
     # read all the data from the database to build linear regression
-    USER_NAME = "cis6030"
-    USER_PASSWORD = "cis6030"
-    DATABASE_NAME = "postgres"
-    TABLE_NAME = "admission"
-
     con = psycopg2.connect(f"host=localhost dbname=postgres user={USER_NAME} password={USER_PASSWORD}")
     cursor = con.cursor()
     cursor.execute("""SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'admission'""")
@@ -83,6 +79,7 @@ def predict_a_new_student(regr, newRecord, col_names):
     print("The predicted chance of admission is: ", newPredict[0][0])
     print("===============================================================")
 
+
 # def train_model(df, newRecord):
 #     col_names = list(df.columns)
 #     col_names = col_names[1:-1]
@@ -130,7 +127,7 @@ if __name__ == "__main__":
     model = train_model_without_userinput(df)
     isFinished = False
     while not isFinished:
-        print("[Press p to make a new prediction, type q to quit]: ", end ="")
+        print("[Press p to make a new prediction, type q to quit]: ", end="")
         command = str(input())
         if command == "q":
             isFinished = True

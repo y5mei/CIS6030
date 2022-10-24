@@ -3,11 +3,7 @@ from prettytable import PrettyTable
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import pandas as pd
 from sqlalchemy import create_engine
-
-USER_NAME = "cis6030"
-USER_PASSWORD = "cis6030"
-DATABASE_NAME = "postgres"
-TABLE_NAME = "admission"
+from YourConstant import *
 
 
 def print_all_col_names():

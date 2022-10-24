@@ -1,0 +1,5 @@
+USER_NAME = "admin"
+USER_PASSWORD = "admin"
+DATABASE_NAME = "postgres-cis6030"
+TABLE_NAME = "admission"
+csv_file_name = "Admission_Predict_Ver1.1.csv"

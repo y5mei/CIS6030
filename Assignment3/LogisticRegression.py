@@ -13,16 +13,12 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_predict
 from prettytable import PrettyTable
 from sklearn.utils import column_or_1d
+from YourConstant import *
 
 
 # get data from database as pandas df
 def get_dataframe_from_database():
     # read all the data from the database to build linear regression
-    USER_NAME = "cis6030"
-    USER_PASSWORD = "cis6030"
-    DATABASE_NAME = "postgres"
-    TABLE_NAME = "admission"
-
     con = psycopg2.connect(f"host=localhost dbname=postgres user={USER_NAME} password={USER_PASSWORD}")
     cursor = con.cursor()
     cursor.execute("""SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'admission'""")
@@ -35,10 +31,12 @@ def get_dataframe_from_database():
     df = pd.DataFrame(all_records, columns=col_names)
     return df
 
+
 def get_cal_names_for_user_input(df):
     col_names = list(df.columns)
     col_names = col_names[1:-1]
     return col_names
+
 
 # use df and the user input record to predict the admission rate
 def train_model(df):
@@ -69,11 +67,12 @@ def train_model(df):
     print("Accuracy is", accuracy, "%")
     print("Confusion Matrix: ")
     t = PrettyTable(["Label", "Predict_Reject", "Predict_Admit"])
-    t.add_row(["Actual_Reject"]+ list(confusion_mat[0]))
-    t.add_row(["Actual_Admit"]+ list(confusion_mat[1]))
+    t.add_row(["Actual_Reject"] + list(confusion_mat[0]))
+    t.add_row(["Actual_Admit"] + list(confusion_mat[1]))
     t.align = "c"
     print(t)
     return regr
+
 
 def make_prediction(df, regr, newRecord):
     col_names = list(df.columns)
@@ -82,6 +81,7 @@ def make_prediction(df, regr, newRecord):
     newPredict = regr.predict(df_new_record)
     print("===============================================================")
     print("The predicted admission result is: ", newPredict[0])
+
 
 # get user input for an unknown student as a list
 def getUserInput():
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     isFinished = False
     while not isFinished:
-        print("[Press p to make a new prediction, type q to quit]: ", end ="")
+        print("[Press p to make a new prediction, type q to quit]: ", end="")
         command = str(input())
         if command == "q":
             isFinished = True
