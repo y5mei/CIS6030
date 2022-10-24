@@ -9,6 +9,7 @@ DATABASE_NAME = "postgres"
 TABLE_NAME = "admission"
 csv_file_name = "Admission_Predict_Ver1.1.csv"
 
+
 # read the csv file to a pandas df
 def save_csv_to_database():
     df = pd.read_csv(csv_file_name, skipfooter=3, engine='python')
