@@ -3,7 +3,19 @@ Yaowen Mei (1177855)
 
 ## Setup Environment
 1. Assume you already have a PostgreSQL database running with a database name "postgres", and a user "cis6030" with a password "cis6030"
-2. setup a conda environment: `conda env create --file 6030a3.yml`
+2. Make sure you have `pip3` installed already; otherwise, you will need to execute the command below in your terminal:
+
+```
+sudo apt install python3-pip
+```
+
+You can verify pip3 is installed by: `pip3 --version`
+3. Install all the dependency from the `requirement.txt file`
+
+```buildoutcfg
+pip3 install -r requirements.txt
+```
+3. setup a conda environment: `conda env create --file 6030a3.yml`
 3. Inside the conda environment, you might need to manually install the `PrettyTable` dependency:
 ```buildoutcfg
 pip install -U git+https://github.com/jazzband/prettytable
