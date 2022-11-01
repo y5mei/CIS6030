@@ -14,6 +14,7 @@ DATABASE_NAME = "postgres-cis6030" # change to a database that your username has
 ```
 
 ## Setup Python Environment 
+**You have to put the `Admission_Predict_Ver1.1.csv` file together with the `main.py` (at the same level of the folder structure)**
 1. You can use Python 3.7. 3.8, or 3.9:
 * to set-up environment with `pip3`, follow step 2 and 3; 
 * to set-up environment with `conda`, please follow step 4, 5; 
