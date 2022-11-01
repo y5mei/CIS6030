@@ -79,8 +79,16 @@ def make_prediction(df, regr, newRecord):
     col_names = col_names[1:-1]
     df_new_record = pd.DataFrame(newRecord, col_names).T
     newPredict = regr.predict(df_new_record)
+    predicted_str = ""
+    if newPredict[0] > 1:
+        predicted_str = "1 ( actual value is " + str(newPredict[0]) + ")"
+    elif newPredict[0] < 0:
+        predicted_str = "0 ( actual value is " + str(newPredict[0]) + ")"
+    else:
+        predicted_str = str(newPredict[0])
     print("===============================================================")
-    print("The predicted admission result is: ", newPredict[0])
+    print("The predicted admission result is: " + predicted_str)
+    print("===============================================================")
 
 
 # get user input for an unknown student as a list

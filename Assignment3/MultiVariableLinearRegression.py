@@ -75,8 +75,14 @@ def get_cal_names_for_user_input(df):
 def predict_a_new_student(regr, newRecord, col_names):
     df_new_record = pd.DataFrame(newRecord, col_names).T
     newPredict = regr.predict(df_new_record)
+    if newPredict[0][0] > 1:
+        predicted_str = "1 ( actual value is "+str(newPredict[0][0])+")"
+    elif newPredict[0][0] < 0:
+        predicted_str = "0 ( actual value is "+str(newPredict[0][0])+")"
+    else:
+        predicted_str = str(newPredict[0][0])
     print("===============================================================")
-    print("The predicted chance of admission is: ", newPredict[0][0])
+    print("The predicted admission result is: "+predicted_str)
     print("===============================================================")
 
 
