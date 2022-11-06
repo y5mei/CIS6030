@@ -7,7 +7,7 @@ from YourConstant import *
 
 
 def print_all_col_names():
-    con = psycopg2.connect(f"host=localhost dbname=postgres user={USER_NAME} password={USER_PASSWORD}")
+    con = psycopg2.connect(f"host=localhost dbname={DATABASE_NAME} user={USER_NAME} password={USER_PASSWORD}")
     cursor = con.cursor()
     cursor.execute("""SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'admission'""")
     col_names = [_[0] for _ in cursor.fetchall()]
@@ -16,7 +16,7 @@ def print_all_col_names():
 
 
 def select_from_where_sql_queries(input):
-    con = psycopg2.connect(f"host=localhost dbname=postgres user={USER_NAME} password={USER_PASSWORD}")
+    con = psycopg2.connect(f"host=localhost dbname={DATABASE_NAME} user={USER_NAME} password={USER_PASSWORD}")
     cursor = con.cursor()
     cursor.execute("""SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = N'admission'""")
     col_names = [_[0] for _ in cursor.fetchall()]
