@@ -3,7 +3,7 @@
 library(igraph)
 import::from(R6, R6Class)
 import::from(collections, PriorityQueue)
-import::from(DescTools, Small)
+import::from(kit, topn)
 import::from(rlang, is_missing)
 library(r2r)
 
@@ -66,9 +66,11 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                               root = NA,
                               n = NA,
                               classification = NA,
+                              myClusters = hashset(),
                               initialize = function(N){
                                 # initialize the leaf node hashmap bins
                                 self$n <- N
+                                self$classification <- replicate(N, 1)
                                 self$hashmap <- list()
                                 for (i in 1:N){
                                   self$hashmap <- append(self$hashmap, TreeNode$new(idx = i))
@@ -141,7 +143,37 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                               #    If the node's stability >= stability of two child: select the node as a cluster and unselect all its descendants
                               extract = function(){
                                 # tranversal the tree to get all the valid leaf nodes
-                                cluster_set <- hashset()
+                                # cluster_set <- hashset()
+
+                                remove_clusters_from_sets<-function(treeNode){
+                                  if (is.null(treeNode)){
+                                    return()
+                                  }
+                                  if (is.null(treeNode$right) & is.null(treeNode$left)){
+                                    print("Removing a cluster ")
+                                    print(treeNode)
+                                    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+                                    delete(self$myClusters, treeNode)
+                                    return()
+                                    }
+                                  if (!is.null(treeNode$left)){
+
+                                    remove_clusters_from_sets(treeNode$left)
+                                  }
+                                  if (!is.null(treeNode$right)){
+                                    remove_clusters_from_sets(treeNode$right)
+                                  }
+                                  print("=========== ALSO NEED TO DELETE THE INTERNAL NODE ================")
+                                  print(treeNode)
+                                  print("=========== Before delete, the lenght of myCLUSTER IS ================")
+                                  cat(length(self$myClusters), "\n")
+
+                                  delete(self$myClusters, treeNode)
+                                  print("After delete the internal node: ")
+                                  print(keys(self$myClusters))
+                                  print("=========== ======================== ================")
+                                  print("=========== ======================== ================")
+                                }
 
                                 post_order <- function(treeNode, parentValue, func){
                                   if (is.null(treeNode)){
@@ -173,7 +205,9 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 insert_cluseter_set <- function(treeNode, parentValue){
                                   # put all the leave nodes as clusters, and keep their stability to be 0
                                   if (is.null(treeNode$right) & is.null(treeNode$left)){
-                                     insert(cluster_set, treeNode)
+                                    cat("Add leafve node: ", treeNode$idx, "\n")
+                                    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                                     insert(self$myClusters, treeNode)
                                     }
                                   else{
                                     basic_stability <- treeNode$num_child * (1/treeNode$value - 1/parentValue)
@@ -191,12 +225,25 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                     }else{
                                       # todo: Not sure should I remove just the left and right child or I need to recursivly remove everything below?
                                       if (!is.null(treeNode$left)){
-                                      delete(cluster_set, treeNode$left)
+                                        remove_clusters_from_sets(treeNode$left)
+                                      # delete(cluster_set, treeNode$left)
+                                      cat("After remove the tree ndoes, there are ", length(self$myClusters), "\n")
+                                        print("these treenodes are: ")
+                                        print(keys(self$myClusters))
+                                        print("%%%%%%%%%%%%%%%%%%%%%%%%%lll%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
                                       }
                                       if (!is.null(treeNode$right)){
-                                      delete(cluster_set, treeNode$right)
+                                       remove_clusters_from_sets(treeNode$right)
+                                      # delete(cluster_set, treeNode$right)
+                                        cat("After remove the tree ndoes, there are ", length(self$myClusters), "\n")
+                                        print("these treenodes are: ")
+                                        print(keys(self$myClusters))
+                                        print("%%%%%%%%%%%%%%%%%%%%%%rrr%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
                                       }
-                                      insert(cluster_set, treeNode)
+                                      cat("Add internal node with stability: ", basic_stability, "\n")
+                                      print(treeNode)
+                                      print("~~~~~~~~~~~~~~~~~~~~XXXXXXX~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                                      insert(self$myClusters, treeNode)
                                       treeNode$stability <- basic_stability
                                       # print(treeNode)
                                       # cat("Remove children, the stabiltiy is ", treeNode$stability, "\n")
@@ -209,35 +256,36 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 # print(keys(cluster_set)[1]) # display all the clusters
 
                                 # generate_cluster_vectors from the hashset, and update the classification field
-                                self$classification <- self$generate_cluster_vector(cluster_set)
+                                self$generate_cluster_vector(self$myClusters)
                               },
 
                               generate_cluster_vector = function(cluster_set){
-                                set_classification_helper <- function(treeNode, classification){
+                                set_classification_helper <- function(treeNode, class_cnter){
                                     if (is.null(treeNode$left) & is.null(treeNode$right)){
-                                      classification[treeNode$idx] <- class_cnter
-                                      cat("classification idx", treeNode$idx, "should has value ", class_cnter, "\n")
-                                      return(classification)
+                                      cat("Set leafnode : ", treeNode$idx, " to class ", class_cnter, "\n")
+                                      self$classification[treeNode$idx] <- class_cnter
+                                      return()
                                     }
 
                                     if (!is.null(treeNode$left)){
-                                      classification <- set_classification_helper(treeNode$left, classification)
+                                      set_classification_helper(treeNode$left, class_cnter)
                                     }
 
                                     if (!is.null(treeNode$right)){
-                                      classification <- set_classification_helper(treeNode$right, classification)
+                                       set_classification_helper(treeNode$right, class_cnter)
                                     }
                                   }
 
-                                classification <- replicate(self$n, 0) # the outliers are classified as class zero
-                                cat("classification vector is: ", classification)
+                                # print(keys(self$myClusters))
+                                # classification <- replicate(self$n, 0) # the outliers are classified as class zero
                                 for (class_cnter in 1:length(cluster_set)){
                                   currentClassNode <- keys(cluster_set)[[class_cnter]]
                                   # get all the leaf nodes under this node, and set the class to be class_cnter
-                                  classification <- set_classification_helper(currentClassNode, classification)
+                                  set_classification_helper(currentClassNode, class_cnter+1)
+                                  print("=================================================")
+                                  print(self$classification)
+                                  print("=================================================")
                                 }
-
-                                return (classification)
                               }
                             ))
 
@@ -246,18 +294,20 @@ HDBSCAN<- R6Class("HDBSCAN",
                               minPts = NA,
                               hTree = NA,
                               table = NA,
+                              predict = NA,
                               # input is a mutual reachability distance graph matrix, g, does not need to be a tri matrix, but must be a symetry matrix at least.
                               initialize = function(table, minPts, g){
                                 # table has higher priority, if table is provided, generate a g from the table
                                 # table can be skipped, and user can only provide g matrix for unit test purpose
                                 self$minPts <- minPts
+
                                 if (!is_missing(table)){
                                   self$table <- table
                                   # plot(table[,1], table[, 2], col = table[, 3], pch = 19, cex = 0.8)
                                   # calculate the mutual_dist graph matrix, and overwrite g with it
                                   xy <- table[, c(1,2)]
                                   euclidean_dist <- as.matrix(dist(xy))
-                                  core_dist <- apply(euclidean_dist, 1, function(x) Small(x, minPts, unique = FALSE)[minPts])
+                                  core_dist <- apply(euclidean_dist, 1, function(x) x[topn(x, minPts, decreasing = FALSE)[minPts]])
 
                                   mutual_dist <- matrix(, nrow = nrow(table), ncol = nrow(table))
                                   for(row in 1:nrow(mutual_dist)) {
@@ -305,7 +355,7 @@ HDBSCAN<- R6Class("HDBSCAN",
                                   value <- elements[3]
                                   htree$build(left, right, value)
                                 }
-                                # self$hTree <- htree
+                                self$hTree <- htree
 
                                 # check htree's leaf nodes' idx
                                 printLeaveNodeIdx <- function(x){
@@ -322,14 +372,15 @@ HDBSCAN<- R6Class("HDBSCAN",
                                   }
                                 }
 
+                                # Todo: remove this print leave node idx method
+                                # printLeaveNodeIdx(htree$root)
                                 # condense the tree
                                 htree$condense(minPts)
                                 htree$extract()
-                                classification <- htree$classification
                                 # Todo: remove this print leave node idx method
-                                # printLeaveNodeIdx(htree$root)
-                                print(classification)
-                                self$table["predict"] <- classification # append a new col
+                                printLeaveNodeIdx(htree$root)
+
+                                self$predict <- htree$classification # append a new col
                                 self$hTree <- htree
                                 # then extract flat clusters from the condensed tree
                               }
