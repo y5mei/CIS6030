@@ -2,6 +2,7 @@ source("UnionFind.R")
 import::from(rlang, is_missing)
 import::from(collections, PriorityQueue)
 library(r2r)
+library(sets)
 library(dequer)
 library(igraph)
 import::from(DescTools, Small) # Todo: change this to TopN
@@ -53,11 +54,16 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                               internal_node_cnter = 0,
 
                               table = NA,
-                              minPts = NA,
+                              minPts = NA, # this is the min cluster size
+                              minPtsForCoreDist = NA,
                               merge = NA, # this is a table
                               post_order_treenodes = c(),
 
-                              initialize = function(table, minPts) {
+                              initialize = function(table, min_cluster_size, min_points) {
+                                if (missing(min_points)){
+                                  min_points <- min_cluster_size
+                                }
+                                self$minPtsForCoreDist <- min_points
                                 # initialize the leaf node hashmap bins
                                 self$n <- nrow(table)
                                 self$cluster <- replicate(self$n, 0)
@@ -77,35 +83,63 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 self$merge <- data.frame(matrix(ncol = 5, nrow = 0))
                                 colnames(self$merge) <- c("child1", "child2", "parent", "height", "lambda")
 
-                                self$minPts <- minPts
+                                self$minPts <- min_cluster_size
                                 if (!is_missing(table)) {
                                   self$table <- table
                                   # plot(table[,1], table[, 2], col = table[, 3], pch = 19, cex = 0.8)
                                   # calculate the mutual_dist graph matrix, and overwrite g with it
                                   xy <- table[, c(1, 2)]
+                                  # x <- table[, c(1)]
+                                  # y <- table[, c(2)]
+                                  print(">> Calculating core_distance ......")
                                   euclidean_dist <- as.matrix(dist(xy))
-                                  core_dist <- apply(euclidean_dist, 1, function(x) Small(x, minPts, unique = FALSE)[minPts])
+                                  # core_dist <- apply(euclidean_dist, 1, function(x) Small(x, min_points, unique = FALSE)[min_points])
+                                  core_dist <- as.matrix(nn2(table, k = min_points)$nn.dists[, min_points])
 
-                                  mutual_dist <- matrix(, nrow = nrow(table), ncol = nrow(table))
-                                  for (row in seq_len(nrow(mutual_dist))) {
-                                    for (col in seq_len(ncol(mutual_dist))) {
-                                      if (row == col) {
-                                        mutual_dist[row, col] <- 0
-                                      }else {
-                                        mutual_dist[row, col] <- max(euclidean_dist[row, col], core_dist[row], core_dist[col])
-                                      }
-                                    }
-                                  }
+                                  core_dist_col_same <- do.call(cbind, replicate(nrow(core_dist), core_dist, simplify=FALSE)) # append col to make it a matrix
+                                  core_dist_row_same <- t(core_dist_col_same)
 
-                                  g <- mutual_dist
+                                  print(">> Calculating mutual_distance ......")
+                                 for (row in seq_len(nrow(euclidean_dist))) {
+                                    for (col in 1:row) {
+                                      euclidean_dist[row, col] <- max( euclidean_dist[row, col],  core_dist_col_same[row, col],  core_dist_row_same[row, col])
+                                    }}
+
+
+                                  # mutual_dist <- matrix(, nrow = nrow(table), ncol = nrow(table))
+                                  #
+                                  # for (row in seq_len(nrow(mutual_dist))) {
+                                  #   for (col in 1:row) {
+                                  #
+                                  #     # cnt <- cnt +1
+                                  #     # if (cset_contains_element(current_process, cnt)){
+                                  #     #   ppp <- ppp + 1
+                                  #     #   print(paste(">> ", ppp*10, "% has been calculated for multro reachable disstance."))
+                                  #     # }
+                                  #
+                                  #     if (row == col) {
+                                  #       # mutual_dist[row, col] <- 0
+                                  #       euclidean_dist[row, col] <- 0
+                                  #     }else {
+                                  #       # mutual_dist[row, col] <- max(euclidean_dist[row, col], core_dist[row], core_dist[col]) # very slow here todo:!!!
+                                  #       # euclidean_dist[row, col] <- max(euclidean_dist[row, col], core_dist[row], core_dist[col]) # very slow here todo:!!!
+                                  #
+                                  #     }
+                                  #   }
+                                  # }
+
+                                  # g <- mutual_dist
+                                  # g <- euclidean_dist
                                 }
 
+                                 print(">> Calculating minimum spanning tree ......")
                                 # convert a matrix to be a mst, this need to be a lower triagnal matrix to avoid the weight of edges
                                 # to be calculated twice
-                                g[upper.tri(g)] <- 0
-                                G <- as.undirected(graph.adjacency(g, weighted = TRUE))
+                                euclidean_dist[upper.tri(euclidean_dist)] <- 0
+                                G <- as.undirected(graph.adjacency(euclidean_dist, weighted = TRUE))
                                 g_mst <- mst(G)
 
+                                print(">> Building minimum spanning tree ......")
                                 # clean the mst, convert it back to a lower triagnal matrix
                                 g_mtrix <- as_adjacency_matrix(g_mst, type = "lower", attr = "weight")
                                 m <- matrix(g_mtrix, nrow = dim(g_mtrix)[1])
@@ -120,7 +154,6 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                     }
                                   }
                                 }
-
                                 # loop through the heap (from min to max) to build the HTree
                                 while (q$size()) {
                                   elements <- q$pop()
@@ -129,9 +162,12 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                   value <- elements[3]
                                   self$build(left, right, value)
                                 }
-
+                                print(">> Condensing the htree ......")
                                 self$condense()
+                                print(">> Extracting the htree ......")
                                 self$extract()
+                                print(">> HDBScan cluster is successfully finished.")
+                                print(">> =========================================================")
                               },
 
                               # a helper funciton to construct a htree via union find, the root is saved into self$root
@@ -213,7 +249,7 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                   self$post_order(treeNode$right, treeNode$value, func)
                                 }
                                 # Break at tree's root level, else, post order
-                                if (parentValue == -10000) {
+                                if (parentValue == -10000000) {
                                   return()
                                 }else {
                                   func(treeNode, parentValue)
@@ -222,6 +258,23 @@ HierarchicalTree <- R6Class("HierarchicalTree",
 
                               cache_treenodes = function(node, someValue){
                                 self$post_order_treenodes <- c(self$post_order_treenodes, node)
+                              },
+
+                              cache_treenodes_iterly = function(){
+                                stack <- deque()
+                                push(stack, self$root)
+
+                                while (length(stack) > 0){
+                                  node <- pop(stack)
+                                  self$post_order_treenodes <- c(self$post_order_treenodes, node)
+                                  if (!is.null(node$left)) {
+                                    push(stack, node$left)
+                                  }
+                                  if (!is.null(node$right)){
+                                    push(stack, node$right)
+                                  }
+                                }
+                                self$post_order_treenodes <- rev(self$post_order_treenodes)
                               },
 
                               iterative_post_order = function(func){
@@ -305,7 +358,12 @@ HierarchicalTree <- R6Class("HierarchicalTree",
 
                               extract = function() {
                                 # calculate the sum of lambda that all children left cluster for each nodes
-                                self$post_order(self$root, 100, self$cache_treenodes)
+                                # self$post_order(self$root, 100, self$cache_treenodes)
+                                self$cache_treenodes_iterly()
+                                print("caching the nodes via post-order ...")
+                                # print("===================")
+                                # print(length(self$post_order_treenodes))
+                                # print("===================")
                                 # self$post_order(self$root, 100, self$calculate_lambda_for_all_children_left_cluster)
                                 # self$post_order(self$root, 100, self$calculate_stability)
                                 # self$post_order(self$root, 100, self$calculate_score)
