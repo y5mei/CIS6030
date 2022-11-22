@@ -1,0 +1,17 @@
+compare_fn              Get key comparison function of an hash table
+default                 Default 'hashmap' values
+default_hash_fn         String hashes for arbitrary R objects
+delete                  Delete keys or key/value pairs from an hash
+                        table.
+has_key                 Key existence in hash tables
+hash_fn                 Get hash function of an hash table
+hashtable               Hash maps and sets
+hashtable_methods       Methods for S3 classes 'hashmap' and 'hashset'
+insert                  Insert keys or key/value pairs into an hash
+                        table.
+keys                    List all keys from an hash table
+length.r2r_hashtable    Size of hash tables
+on_missing_key          On missing key behaviour
+query                   Query keys from an hash table.
+subsetting_hashtables   Subsetting 'hashset's and 'hashmap's
+values                  List all values from an hash map

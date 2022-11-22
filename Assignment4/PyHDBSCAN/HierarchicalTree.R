@@ -1,11 +1,14 @@
 source("UnionFind.R")
 import::from(rlang, is_missing)
 import::from(collections, PriorityQueue)
-library(r2r)
-library(sets)
-library(dequer)
+import::from(collections, deque)
 library(igraph)
-import::from(DescTools, Small) # Todo: change this to TopN
+library(r2r) # for hashmap
+library(RANN)
+# import::from(collections, hashmap)
+# library(sets) # for sets
+# library(dequer) #for deque
+# import::from(DescTools, Small) # Todo: change this to TopN
 
 TreeNode <- R6Class("TreeNode",
                     public = list(
@@ -86,15 +89,11 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 self$minPts <- min_cluster_size
                                 if (!is_missing(table)) {
                                   self$table <- table
-                                  # plot(table[,1], table[, 2], col = table[, 3], pch = 19, cex = 0.8)
-                                  # calculate the mutual_dist graph matrix, and overwrite g with it
-                                  xy <- table[, c(1, 2)]
-                                  # x <- table[, c(1)]
-                                  # y <- table[, c(2)]
+                                  xy <- table[, 1:ncol(table)-1] # discard the label col
                                   print(">> Calculating core_distance ......")
                                   euclidean_dist <- as.matrix(dist(xy))
                                   # core_dist <- apply(euclidean_dist, 1, function(x) Small(x, min_points, unique = FALSE)[min_points])
-                                  core_dist <- as.matrix(nn2(table, k = min_points)$nn.dists[, min_points])
+                                  core_dist <- as.matrix(nn2(xy, k = min_points)$nn.dists[, min_points])
 
                                   core_dist_col_same <- do.call(cbind, replicate(nrow(core_dist), core_dist, simplify=FALSE)) # append col to make it a matrix
                                   core_dist_row_same <- t(core_dist_col_same)
@@ -104,32 +103,6 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                     for (col in 1:row) {
                                       euclidean_dist[row, col] <- max( euclidean_dist[row, col],  core_dist_col_same[row, col],  core_dist_row_same[row, col])
                                     }}
-
-
-                                  # mutual_dist <- matrix(, nrow = nrow(table), ncol = nrow(table))
-                                  #
-                                  # for (row in seq_len(nrow(mutual_dist))) {
-                                  #   for (col in 1:row) {
-                                  #
-                                  #     # cnt <- cnt +1
-                                  #     # if (cset_contains_element(current_process, cnt)){
-                                  #     #   ppp <- ppp + 1
-                                  #     #   print(paste(">> ", ppp*10, "% has been calculated for multro reachable disstance."))
-                                  #     # }
-                                  #
-                                  #     if (row == col) {
-                                  #       # mutual_dist[row, col] <- 0
-                                  #       euclidean_dist[row, col] <- 0
-                                  #     }else {
-                                  #       # mutual_dist[row, col] <- max(euclidean_dist[row, col], core_dist[row], core_dist[col]) # very slow here todo:!!!
-                                  #       # euclidean_dist[row, col] <- max(euclidean_dist[row, col], core_dist[row], core_dist[col]) # very slow here todo:!!!
-                                  #
-                                  #     }
-                                  #   }
-                                  # }
-
-                                  # g <- mutual_dist
-                                  # g <- euclidean_dist
                                 }
 
                                  print(">> Calculating minimum spanning tree ......")
@@ -189,14 +162,6 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 left_treeNode$lambda_birth <- 1 / value
                                 right_treeNode$lambda_birth <- 1 / value
 
-                                # # if left or right is leaf node, also save the lambda_birth value as lambda_all_children_leave_cluster value
-                                # if (left_treeNode$isLeafNode()) {
-                                #   left_treeNode$lambda_all_children_leave_cluster <- 1 / value
-                                # }
-                                # if (right_treeNode$isLeafNode()) {
-                                #   right_treeNode$lambda_all_children_leave_cluster <- 1 / value
-                                # }
-
                                 # Append left.idx, right.idx, height, new_node.idx, 1/height save to merge table
                                 left_idx <- left_treeNode$idx
                                 right_idx <- right_treeNode$idx
@@ -219,16 +184,16 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                 dummy <- self$root
                                 dummy$is_in_condensed_tree <- TRUE
                                 d <- deque()
-                                push(d, self$root)
-                                while (length(d) > 0) {
-                                  node <- popback(d)
+                                d$push(self$root)
+                                while (d$size() > 0) {
+                                  node <- d$popleft()
                                   if (!is.null(node$left) & node$left$num_child >= self$minPts) {
                                     node$left$is_in_condensed_tree <- TRUE
-                                    push(d, node$left)
+                                    d$push(node$left)
                                   }
                                   if (!is.null(node$right) & node$right$num_child >= self$minPts) {
                                     node$right$is_in_condensed_tree <- TRUE
-                                    push(d, node$right)
+                                    d$push(node$right)
                                   }
                                 }
 
@@ -262,16 +227,16 @@ HierarchicalTree <- R6Class("HierarchicalTree",
 
                               cache_treenodes_iterly = function(){
                                 stack <- deque()
-                                push(stack, self$root)
+                                stack$push(self$root)
 
-                                while (length(stack) > 0){
-                                  node <- pop(stack)
+                                while (stack$size() > 0){
+                                  node <- stack$pop()
                                   self$post_order_treenodes <- c(self$post_order_treenodes, node)
                                   if (!is.null(node$left)) {
-                                    push(stack, node$left)
+                                    stack$push(node$left)
                                   }
                                   if (!is.null(node$right)){
-                                    push(stack, node$right)
+                                    stack$push(node$right)
                                   }
                                 }
                                 self$post_order_treenodes <- rev(self$post_order_treenodes)
@@ -309,19 +274,6 @@ HierarchicalTree <- R6Class("HierarchicalTree",
                                   node$stability <- node$lambda_all_children_leave_cluster - node$num_child * node$lambda_birth
                                 }
                               },
-
-                              # set_cluster_num_for_all_leaf_nodes_below = function(node, clusterNum) {
-                              #   if (!node$isLeafNode()) {
-                              #     return()
-                              #   }
-                              #   if (self$cluster[[node$idx]] == 0) {
-                              #     # do thing with the noise leaf nodes
-                              #     return()
-                              #   }
-                              #   # set the non-outlier leaf node belongs to a cluster
-                              #   self$cluster[[node$idx]] <- clusterNum
-                              #
-                              # },
 
                               # now we need to calculate score, only the condensed nodes have valid score defined,
                               # score is the max of (node's stability, sum of the stability of its two children)
