@@ -122,6 +122,21 @@ Comparing to the K-Mean's result, K-Mean did a better job in this dataset.
 
 For the multishapes dataset, as we disscussed above, hdbscan provides a result better than K-Mean, but not as good as dbscan.
 
-I have ploted hdbscan result with different MCS (min cluster size) and minPts (num of points to calculate core-distance).
+I have ploted hdbscan result with different MCS (min cluster size) and minPts (num of points to calculate core-distance). I think a reasonable result is for MCS = 15 or 49, minPts = 50, hdbscan clustered the dataset into 4 clusters plus noise points. Which carefully choose the parameters, hdbscan provide a more reasonable result than K-Mean.
+
 ![hdbscan_m1](pics/hdbscan_m1.png "My HDBSCAN resutl 1 of the multishapes dataset")
 ![hdbscan_m2](pics/hdbscan_m2.png "My HDBSCAN result 2 of the multishapes dataset")
+
+---
+
+## Step-4: Briefly compare the two programs for clustering the two files.
+
+As disscussed above, I found K-Mean is good for dataset that:
+1. We already know how many clusters we have
+2. The regiona of the datasets have some overlapping area in certain dimensions
+
+hdbscan is good for dataset that:
+1. We do not know how many clusters we are trying to get
+2. Density and shape of the clusters are different
+3. Some clusters are totally merged into the region of other clusters
+4. Contains noise points that need to be removed
